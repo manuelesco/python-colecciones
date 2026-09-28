@@ -1,0 +1,4896 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial Interactivo - Colecciones en Python</title>
+	
+	<!-- Tabler Icons — siempre antes de tu CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.34.0/dist/tabler-icons.min.css">
+  
+  
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --python-blue: #306998; --python-blue-light: #4B8BBE; --python-blue-dark: #265577;
+            --python-yellow: #FFD43B; --python-yellow-light: #FFE873; --python-yellow-dark: #E5BE01;
+            --bg-dark: #1a1a2e; --bg-card: #16213e; --bg-code: #0f0f23;
+            --text-light: #e0e0e0; --text-muted: #a0a0b8;
+            --success: #4caf50; --error: #f44336; --warning: #ff9800;
+            --border-radius: 12px; --shadow: 0 8px 32px rgba(0,0,0,0.3);
+			--color-rojo: red;
+			--color-blanco: white;
+			--color-green: green;
+        }
+		p {
+			text-align: justify;
+		}
+		
+		.text-center { text-align: center; }
+		
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-dark); color: var(--text-light); line-height: 1.7; min-height: 100vh; }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--python-blue); border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--python-blue-light); }
+
+        header { background: linear-gradient(135deg, var(--python-blue-dark) 0%, var(--python-blue) 50%, var(--python-yellow-dark) 100%); padding: 40px 20px; text-align: center; position: relative; overflow: hidden; }
+        header::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,212,59,0.1) 0%, transparent 60%); animation: pulse 8s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 1; } }
+        .logo-container { display: inline-flex; align-items: center; gap: 15px; margin-bottom: 20px; position: relative; z-index: 1; }
+        .python-logo-svg { width: 100px; height: 100px; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3)); }
+        header h1 { font-size: 2.5em; font-weight: 800; color: #fff; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); position: relative; z-index: 1; }
+        header h1 span.blue { color: var(--python-yellow); }
+        header h1 span.yellow { color: var(--python-blue-light); }
+        header p { font-size: 1.2em; color: rgba(255,255,255,0.85); margin-top: 10px; position: relative; z-index: 1; }
+
+        nav { background: var(--bg-card); padding: 15px 20px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.4); border-bottom: 2px solid var(--python-blue); }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: center; }
+        .nav-btn { background: transparent; color: var(--text-light); border: 1px solid rgba(48,105,152,0.4); padding: 7px 13px; border-radius: 25px; cursor: pointer; font-size: 0.8em; transition: all 0.3s ease; white-space: nowrap; }
+        .nav-btn:hover, .nav-btn.active { background: var(--python-blue); border-color: var(--python-yellow); color: var(--python-yellow); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(48,105,152,0.4); }
+        .progress-bar { width: 100%; max-width: 1200px; margin: 10px auto 0; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--python-blue), var(--python-yellow)); width: 0%; transition: width 0.5s ease; border-radius: 2px; }
+        .progress-text { text-align: center; font-size: 0.75em; color: var(--text-muted); margin-top: 4px; }
+
+        main { max-width: 900px; margin: 0 auto; padding: 30px 20px 60px; }
+        .section { display: none; animation: fadeIn 0.5s ease; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .section-title { font-size: 2em; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; }
+        .section-title .icon { width: 45px; height: 45px; background: linear-gradient(135deg, var(--python-blue), var(--python-yellow)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3em; flex-shrink: 0; }
+        .section-subtitle { color: var(--text-muted); font-size: 1.1em; margin-bottom: 30px; padding-left: 57px; }
+
+        .card { background: var(--bg-card); border-radius: var(--border-radius); padding: 25px; margin-bottom: 25px; box-shadow: var(--shadow); border: 1px solid rgba(48,105,152,0.2); transition: transform 0.3s ease, border-color 0.3s ease; }
+        .card:hover { border-color: rgba(255,212,59,0.3); }
+        .card h3 { color: var(--python-yellow); font-size: 1.3em; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+		.card h3.sub{ color: var(--python-blue); font-size: 1.3em; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .card p, .card li { color: var(--text-muted); margin-bottom: 8px; }
+        .card ul { padding-left: 20px; }
+        .card ul li { margin-bottom: 5px; }
+        .highlight { color: var(--python-yellow); font-weight: 600; }
+		.warning { color: var(--color-rojo); font-weight: 600; }
+		.numpy { color: rgb(77, 119, 207); font-weight: 600; }
+
+        .code-block { background: var(--bg-code); border-radius: 10px; margin: 15px 0; overflow: hidden; border: 1px solid rgba(48,105,152,0.3); }
+        .code-header { background: rgba(48,105,152,0.3); padding: 8px 15px; display: flex; justify-content: space-between; align-items: center; }
+        .code-header span { font-size: 0.8em; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .code-dots { display: flex; gap: 6px; }
+        .code-dots span { width: 12px; height: 12px; border-radius: 50%; }
+        .code-dots span:nth-child(1) { background: #ff5f56; }
+        .code-dots span:nth-child(2) { background: #ffbd2e; }
+        .code-dots span:nth-child(3) { background: #27c93f; }
+        .code-body { padding: 15px 20px; overflow-x: auto; }
+        .code-body pre { margin: 0; font-family: 'Consolas', 'Monaco', 'Courier New', monospace; font-size: 0.9em; line-height: 1.8; }
+        .kw { color: #c792ea; font-weight: bold; }
+        .fn { color: #82aaff; }
+        .st { color: #c3e88d; }
+        .cm { color: #546e7a; font-style: italic; }
+        .nb { color: #89ddff; }
+        .num { color: #f78c6c; }
+        .op { color: #89ddff; }
+        .var { color: #ffcb6b; }
+        .bool { color: #ff5370; font-weight: bold; }
+        .indent { display: inline-block; width: 4ch; }
+
+        .output-block { background: rgba(76,175,80,0.1); border: 1px solid rgba(76,175,80,0.3); border-radius: 8px; padding: 12px 18px; margin-top: 10px; font-family: 'Consolas', monospace; font-size: 0.9em; color: var(--success); }
+        .output-block .output-label { font-size: 0.75em; color: var(--success); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; font-weight: 600; }
+
+        .demo-container { background: linear-gradient(135deg, rgba(48,105,152,0.15), rgba(255,212,59,0.05)); border: 2px solid var(--python-blue); border-radius: var(--border-radius); padding: 25px; margin: 25px 0; }
+        .demo-title { color: var(--python-yellow); font-size: 1.1em; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .demo-input-group { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 15px; }
+        .demo-input-group label { font-size: 0.9em; color: var(--text-muted); min-width: 120px; }
+        .demo-input { background: var(--bg-code); border: 1px solid rgba(48,105,152,0.4); color: var(--text-light); padding: 10px 15px; border-radius: 8px; font-size: 0.95em; font-family: 'Consolas', monospace; outline: none; transition: border-color 0.3s; min-width: 150px; }
+        .demo-input:focus { border-color: var(--python-yellow); box-shadow: 0 0 10px rgba(255,212,59,0.2); }
+        .demo-select { background: var(--bg-code); border: 1px solid rgba(48,105,152,0.4); color: var(--text-light); padding: 10px 15px; border-radius: 8px; font-size: 0.95em; outline: none; cursor: pointer; min-width: 150px; }
+        .demo-select:focus { border-color: var(--python-yellow); }
+        .demo-select option { background: var(--bg-code); color: var(--text-light); }
+        .run-btn { background: linear-gradient(135deg, var(--python-blue), var(--python-blue-light)); color: #fff; border: none; padding: 10px 25px; border-radius: 8px; cursor: pointer; font-size: 0.95em; font-weight: 600; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; }
+        .run-btn:hover { background: linear-gradient(135deg, var(--python-yellow-dark), var(--python-yellow)); color: var(--bg-dark); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255,212,59,0.3); }
+        .demo-output { background: var(--bg-code); border-radius: 8px; padding: 15px; margin-top: 15px; font-family: 'Consolas', monospace; font-size: 0.9em; min-height: 50px; border: 1px solid rgba(48,105,152,0.2); white-space: pre-wrap; transition: border-color 0.3s; }
+        .demo-output.has-output { border-color: var(--python-yellow); }
+
+        /* QUIZ — nuevo diseño */
+        .quiz-card { background: var(--bg-card); border: 1px solid rgba(48,105,152,0.3); border-radius: 14px; padding: 24px; margin-top: 20px; }
+        .quiz-q { font-size: 1rem; font-weight: 600; color: var(--text-light); margin-bottom: 16px; line-height: 1.5; }
+        .quiz-options { display: grid; gap: 10px; }
+        .quiz-opt { background: rgba(48,105,152,0.1); border: 2px solid rgba(48,105,152,0.3); border-radius: 10px; padding: 12px 16px; cursor: pointer; font-family: 'Consolas', 'Monaco', monospace; font-size: 0.88rem; color: var(--text-light); text-align: left; transition: all 0.2s; }
+        .quiz-opt:hover { border-color: var(--python-blue-light); background: rgba(48,105,152,0.2); }
+        .quiz-opt.correct { border-color: var(--success); background: rgba(76,175,80,0.15); color: var(--success); }
+        .quiz-opt.wrong { border-color: var(--error); background: rgba(244,67,54,0.1); color: var(--error); }
+        .quiz-feedback { margin-top: 14px; padding: 12px 16px; border-radius: 10px; font-size: 0.9rem; display: none; }
+        .quiz-feedback.show { display: block; }
+        .quiz-feedback.ok { background: rgba(76,175,80,0.15); border: 1px solid rgba(76,175,80,0.3); color: var(--success); }
+        .quiz-feedback.fail { background: rgba(244,67,54,0.1); border: 1px solid rgba(244,67,54,0.3); color: var(--error); }
+        .quiz-next { margin-top: 14px; background: linear-gradient(135deg, var(--python-yellow-dark), var(--python-yellow)); color: var(--bg-dark); border: none; border-radius: 8px; padding: 10px 22px; font-weight: 700; cursor: pointer; display: none; transition: all 0.2s; font-size: 0.95em; }
+        .quiz-next.show { display: inline-block; }
+        .quiz-next:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255,212,59,0.4); }
+
+        .flow-diagram { display: flex; flex-direction: column; align-items: center; gap: 0; margin: 20px 0; padding: 20px; }
+        .flow-box { background: var(--bg-card); border: 2px solid var(--python-blue); border-radius: 10px; padding: 12px 25px; text-align: center; font-weight: 600; position: relative; min-width: 200px; }
+        .flow-box.start { border-radius: 25px; background: linear-gradient(135deg, var(--python-blue), var(--python-blue-light)); border-color: var(--python-blue-light); }
+        .flow-box.decision { border-color: var(--python-yellow); background: rgba(255,212,59,0.1); color: var(--python-yellow); border-radius: 10px; padding: 15px 25px; min-width: 200px; }
+        .flow-box.action { border-color: var(--python-blue-light); background: rgba(75,139,190,0.1); }
+        .flow-box.end { border-radius: 25px; background: linear-gradient(135deg, var(--python-yellow-dark), var(--python-yellow)); border-color: var(--python-yellow); color: var(--bg-dark); }
+        .flow-arrow { width: 2px; height: 30px; background: var(--text-muted); position: relative; }
+        .flow-arrow::after { content: '▼'; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); color: var(--text-muted); font-size: 0.7em; }
+        .flow-label { font-size: 0.8em; color: var(--python-yellow); font-weight: 600; margin: 5px 0; }
+        .flow-branch { display: flex; gap: 40px; align-items: flex-start; margin: 10px 0; }
+        .flow-branch-item { display: flex; flex-direction: column; align-items: center; gap: 0; }
+
+        <!--.comparison-table { width: 100%; min-width: 500px; border-collapse: separate; border-spacing: 0; margin: 20px auto; border-radius: 10px; overflow: hidden; border: 1px solid rgba(48,105,152,0.3); }-->
+		.comparison-table { width: 100%; border-collapse: separate; border-spacing: 0; margin: 20px auto; border-radius: 10px; overflow: hidden; border: 1px solid rgba(48,105,152,0.3); table-layout: fixed; }
+        .comparison-table th { background: linear-gradient(135deg, var(--python-blue-dark), var(--python-blue)); color: var(--python-yellow); padding: 14px 18px; text-align: left; font-weight: 700; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; white-space: normal; word-wrap: break-word; overflow-wrap: break-word;}	
+        .comparison-table td { background: var(--bg-card); padding: 12px 18px; border-bottom: 1px solid rgba(48,105,152,0.15); font-size: 0.9em; white-space: normal; word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; }
+        .comparison-table th:first-child,
+        .comparison-table td:first-child { width: 150px; white-space: nowrap; }
+        .comparison-table td:not(:first-child) { text-align: justify; }
+        .comparison-table tr:last-child td { border-bottom: none; }
+        .comparison-table tr:hover td { background: rgba(48,105,152,0.1); }
+        .comparison-table code { background: rgba(255,212,59,0.1); color: var(--python-yellow); padding: 2px 8px; border-radius: 4px; font-family: 'Consolas', monospace; font-size: 0.9em; }
+
+        .tip-box { background: rgba(255,212,59,0.08); border-left: 4px solid var(--python-yellow); border-radius: 0 10px 10px 0; padding: 18px 20px; margin: 20px 0; }
+        .tip-box .tip-title { color: var(--python-yellow); font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .tip-box p { color: var(--text-muted); font-size: 0.95em; }
+        .warning-box { background: rgba(244,67,54,0.08); border-left: 4px solid var(--error); border-radius: 0 10px 10px 0; padding: 18px 20px; margin: 20px 0; }
+        <!-- .warning-box .warning-title { color: var(--error); font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; } -->
+		.warning-box .warning-title { color: var(--color-rojo); font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+		.warning-box p { color: #fef08a; font-size: 0.95em; }
+		.note-box { background: rgba(255,212,59,0.08); border-left: 4px solid var(--color-green); border-radius: 0 10px 10px 0; padding: 18px 20px; margin: 20px 0; }
+        .note-box .note-title { color: var(--color-green); font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .note-box p { color: var(--text-muted); font-size: 0.95em; }
+
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(48,105,152,0.2); }
+        .nav-arrow-btn { background: linear-gradient(135deg, var(--python-blue), var(--python-blue-light)); color: #fff; border: none; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-size: 0.95em; font-weight: 600; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; }
+        .nav-arrow-btn:hover { background: linear-gradient(135deg, var(--python-yellow-dark), var(--python-yellow)); color: var(--bg-dark); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255,212,59,0.3); }
+        .nav-arrow-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        .score-panel { position: fixed; bottom: 20px; right: 20px; background: var(--bg-card); border: 2px solid var(--python-yellow); border-radius: 15px; padding: 15px 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.5); z-index: 999; min-width: 180px; }
+        .score-panel .score-label { font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .score-panel .score-value { font-size: 2em; font-weight: 800; color: var(--python-yellow); line-height: 1; }
+        .score-panel .score-total { font-size: 0.85em; color: var(--text-muted); }
+
+        footer { text-align: center; padding: 30px 20px; color: var(--text-muted); font-size: 0.85em; border-top: 1px solid rgba(48,105,152,0.2); margin-top: 40px; }
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.8em; } 
+			.section-title { font-size: 1.5em; } 
+			.section-subtitle { padding-left: 0; }
+            .nav-container { gap: 5px; } 
+			.nav-btn { padding: 6px 12px; font-size: 0.75em; } 
+			.code-body pre { font-size: 0.8em; }
+            .demo-input-group { flex-direction: column; align-items: stretch; } 
+			.demo-input-group label { min-width: auto; }
+            .flow-branch { flex-direction: column; gap: 15px; } 
+			.score-panel { bottom: 10px; right: 10px; padding: 10px 15px; min-width: 140px; }
+            .score-panel .score-value { font-size: 1.5em; } .python-logo-svg { width: 80px; height: 80px; }
+			.footer-logo-space img { height: 45px; }
+        }
+
+        .bounce-in { animation: bounceIn 0.6s ease; }
+        @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.05); } 70% { transform: scale(0.9); } 100% { transform: scale(1); opacity: 1; } }
+
+        .challenge-box { background: linear-gradient(135deg, rgba(255,152,0,0.1), rgba(244,67,54,0.05)); border: 2px solid var(--warning); border-radius: var(--border-radius); padding: 25px; margin: 25px 0; }
+        .challenge-box .challenge-title { color: var(--warning); font-size: 1.1em; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .challenge-box p { color: var(--text-muted); margin-bottom: 10px; }
+        .mini-editor { background: var(--bg-code); border-radius: 10px; border: 1px solid rgba(48,105,152,0.3); overflow: hidden; margin: 15px 0; }
+        .mini-editor-header { background: rgba(48,105,152,0.3); padding: 8px 15px; display: flex; justify-content: space-between; align-items: center; }
+        .mini-editor-header span { font-size: 0.8em; color: var(--text-muted); font-weight: 600; }
+        .editor-instructions { background: rgba(255,212,59,0.06); border-bottom: 1px solid rgba(48,105,152,0.2); padding: 12px 18px; font-family: 'Consolas', monospace; font-size: 0.85em; color: var(--text-muted); line-height: 1.8; white-space: pre; user-select: text; -webkit-user-select: text; }
+        .editor-instructions .instruction-line { color: #546e7a; font-style: italic; }
+        .editor-instructions .instruction-var { color: #ffcb6b; }
+        .mini-editor textarea { width: 100%; min-height: 280px; background: transparent; border: none; color: var(--text-light); font-family: 'Consolas', monospace; font-size: 0.9em; padding: 15px; resize: vertical; outline: none; line-height: 1.8; tab-size: 4; }
+        .mini-editor textarea::placeholder { color: rgba(160,160,184,0.3); }
+        .mini-editor-footer { padding: 10px 15px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; border-top: 1px solid rgba(48,105,152,0.2); }
+        .editor-output { background: var(--bg-code); border: 1px solid rgba(48,105,152,0.2); border-radius: 8px; padding: 12px 15px; font-family: 'Consolas', monospace; font-size: 0.85em; min-height: 40px; margin-top: 10px; white-space: pre-wrap; color: var(--text-muted); }
+        .editor-output.success { border-color: rgba(76,175,80,0.4); color: var(--success); }
+        .editor-output.error { border-color: rgba(244,67,54,0.4); color: var(--error); }
+        .steps { display: flex; justify-content: center; gap: 5px; margin: 20px 0; flex-wrap: wrap; }
+        .step-dot { width: 35px; height: 35px; border-radius: 50%; background: rgba(48,105,152,0.2); border: 2px solid rgba(48,105,152,0.3); display: flex; align-items: center; justify-content: center; font-size: 0.8em; font-weight: 700; color: var(--text-muted); transition: all 0.3s; }
+        .step-dot.completed { background: var(--python-blue); border-color: var(--python-blue-light); color: #fff; }
+        .step-dot.current { background: var(--python-yellow); border-color: var(--python-yellow); color: var(--bg-dark); transform: scale(1.2); }
+        .solution-toggle { background: none; border: 1px solid rgba(255,212,59,0.3); color: var(--python-yellow); padding: 8px 18px; border-radius: 8px; cursor: pointer; font-size: 0.85em; transition: all 0.3s ease; margin-top: 10px; }
+        .solution-toggle:hover { background: rgba(255,212,59,0.1); border-color: var(--python-yellow); }
+        .solution-content { display: none; margin-top: 10px; }
+        .solution-content.visible { display: block; }
+
+
+	
+	
+	.section-header {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		margin-bottom: 28px;
+		padding-bottom: 18px;
+		border-bottom: 1px solid var(--border);
+	}
+  
+	.section-icon {
+		width: 48px;
+		height: 48px;
+		border-radius: 12px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 22px;
+		flex-shrink: 0;
+	}
+
+	.icon-blue { background: rgba(48,105,152,0.25); border: 1px solid rgba(48,105,152,0.4); }
+	.icon-yellow { background: rgba(255,212,59,0.15); border: 1px solid rgba(255,212,59,0.3); }
+	.icon-green { background: rgba(63,185,80,0.15); border: 1px solid rgba(63,185,80,0.3); }
+	.icon-red { background: rgba(248,81,73,0.15); border: 1px solid rgba(248,81,73,0.3); }
+	.icon-purple { background: rgba(210,168,255,0.15); border: 1px solid rgba(210,168,255,0.3); }
+	.icon-orange { background: rgba(240,136,62,0.15); border: 1px solid rgba(240,136,62,0.3); }
+	
+	.section-header-text h2 {
+		font-size: 1.7rem;
+		font-weight: 700;
+		letter-spacing: -0.5px;
+	}
+	
+	.section-header-text p {
+		color: var(--text-dim);
+		font-size: 0.9rem;
+		margin-top: 4px;
+	}
+	
+	/* COMPARISON TABLE */
+  .cmp-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 0.9rem;
+  }
+
+  .cmp-table th {
+    background: var(--py-blue);
+    color: white;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .cmp-table th:first-child { border-radius: 10px 0 0 0; }
+  .cmp-table th:last-child { border-radius: 0 10px 0 0; }
+
+  .cmp-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .cmp-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .cmp-table tr:hover td { background: rgba(48,105,152,0.08); }
+  .cmp-table td:first-child { font-family: 'JetBrains Mono', monospace; color: var(--py-yellow); font-weight: 700; }
+  
+  /* ANCHO DE LA TABLA */
+	.comparison-table.table-compact th,
+	.comparison-table.table-compact td {
+		font-size: 0.9em;
+		padding: 12px 18px;
+		white-space: normal;
+		word-wrap: break-word;
+		overflow-wrap: break-word;
+		word-break: break-word;
+	}
+	.comparison-table.table-compact th:first-child,
+	.comparison-table.table-compact td:first-child {
+		width: 150px;
+		white-space: nowrap;
+	}
+	.comparison-table.table-compact td:not(:first-child) {
+		text-align: justify;
+	}
+	.comparison-table.table-methods td:first-child {
+		width: 250px;
+		white-space: normal;
+		word-wrap: break-word;
+		overflow-wrap: break-word;
+	}
+
+    /* SECCIÓN EXPANDIBLE */
+	.expandable-card { cursor: pointer; transition: all 0.3s ease; }
+	.expandable-card:hover { transform: translateX(5px); }
+	.expandable-card .expandable-details { display: none; margin-top: 15px; padding-top: 15px; border-top: 2px solid var(--python-blue); }
+	.expandable-card.expanded .expandable-details { display: block; animation: fadeIn 0.3s ease; }
+	.expandable-card h3::after { content: " ▶"; font-size: 0.8em; margin-left: auto; }
+	.expandable-card.expanded h3::after { content: " ▼"; }
+
+    /* ── Prism syntax highlighting ── */
+    .snippet-tag {
+      font-family: 'Consolas','Monaco','Courier New',monospace;
+      font-size: .72rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    .tag-output { background: rgba(76,175,80,.15); color: #4caf50; }
+
+    .output-bar { border-top: 1px solid rgba(48,105,152,0.3); justify-content: flex-end; }
+
+    /* code-wrap: columna de números + bloque de código */
+    .code-wrap {
+      display: flex;
+      overflow-x: auto;
+    }
+    .line-numbers-col {
+      flex-shrink: 0;
+      background: rgba(48,105,152,0.15);
+      border-right: 1px solid rgba(48,105,152,0.3);
+      padding: 15px 12px 15px 14px;
+      font-family: 'Consolas','Monaco','Courier New',monospace;
+      font-size: 0.9em;
+      line-height: 1.8;
+      color: #445566;
+      text-align: right;
+      user-select: none;
+      -webkit-user-select: none;
+      pointer-events: none;
+    }
+    .line-numbers-col span { display: block; }
+    .code-wrap pre[class*="language-"] {
+      flex: 1;
+      margin: 0 !important;
+      border-radius: 0 !important;
+      padding: 15px 20px !important;
+      background: transparent !important;
+      font-family: 'Consolas','Monaco','Courier New',monospace !important;
+      font-size: 0.9em !important;
+      line-height: 1.8 !important;
+      overflow-x: visible;
+    }
+
+    /* Prism token overrides */
+    .token.comment,.token.prolog,.token.doctype { color: #546e7a !important; font-style: italic; }
+    .token.keyword  { color: #c792ea !important; font-weight: bold; }
+    .token.builtin  { color: #89ddff !important; }
+    .token.string,.token.char { color: #c3e88d !important; }
+    .token.number   { color: #f78c6c !important; }
+    .token.function { color: #82aaff !important; }
+    .token.class-name { color: #89ddff !important; font-weight: 600; }
+    .token.decorator,.token.at-rule { color: #4ade80 !important; }
+    .token.boolean  { color: #ff5370 !important; font-weight: bold; }
+    .token.operator { color: #89ddff !important; }
+    .token.punctuation { color: #89ddff !important; }
+
+    /* output-body (debajo de la barra de salida) */
+    .output-body {
+      background: rgba(0,0,0,0.25);
+      padding: 12px 20px;
+      font-family: 'Consolas','Monaco','Courier New',monospace;
+      font-size: 0.9em;
+      line-height: 1.8;
+    }
+	
+	.output-body pre {
+		color: #4ade80;
+	}
+    .output-line { display: block; color: var(--success); }
+    .output-line::before { content: '>>> '; color: rgba(160,160,184,0.5); user-select: none; }
+	
+	/* output-body-file (debajo de la barra de salida) */
+    .output-body-file {
+      background: #E8DFC8;
+      padding: 12px 20px;
+      font-family: 'Consolas','Monaco','Courier New',monospace;
+      font-size: 1.1em;
+      line-height: 1.8;
+    }
+	
+	.output-body-file pre {
+		color: #2E2416;
+	}
+
+    /* ── section heading ── */
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      margin-top: 48px;
+    }
+
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--python-yellow);
+      border-radius: 2px;
+    }
+
+
+/* ───────────────────────────────────────── */
+/* ESTILOS TIPO python_syntax_OKAS.html      */
+/* ───────────────────────────────────────── */
+
+.snippet {
+  background: var(--bg-card);
+  border: 1px solid rgba(48,105,152,0.25);
+  border-radius: 12px;
+  margin-bottom: 32px;
+  overflow: hidden;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.snippet:hover {
+  border-color: rgba(255,212,59,.35);
+  box-shadow: 0 0 32px rgba(255,212,59,.06);
+}
+
+.snippet-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid rgba(48,105,152,0.25);
+  gap: 12px;
+}
+
+.dots {
+  display: flex;
+  gap: 6px;
+}
+
+.dots span {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: block;
+}
+
+.dots span:nth-child(1) { background: #ff5f57; }
+.dots span:nth-child(2) { background: #febc2e; }
+.dots span:nth-child(3) { background: #28c840; }
+
+.snippet-title {
+  font-family: 'Consolas','Monaco','Courier New',monospace;
+  font-size: .8rem;
+  color: var(--text-muted);
+  flex: 1;
+  text-align: center;
+}
+
+.snippet-tag {
+  font-family: 'Consolas','Monaco','Courier New',monospace;
+  font-size: .72rem;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.tag-fn {
+  background: rgba(92,216,247,.15);
+  color: #5cd8f7;
+}
+
+.tag-output {
+  background: rgba(74,222,128,.15);
+  color: #4ade80;
+}
+
+.tag-file {
+  background: rgba(251,146,60,.15);
+  color: #fb923c;
+}
+
+.output-bar {
+  border-top: 1px solid rgba(48,105,152,0.25);
+  justify-content: flex-end;
+}
+
+.snippet pre[class*="language-"] {
+  margin: 0 !important;
+  border-radius: 0 !important;
+  padding: 22px 24px !important;
+  background: transparent !important;
+  font-family: 'Consolas','Monaco','Courier New',monospace !important;
+  font-size: .85rem !important;
+  line-height: 1.75 !important;
+  overflow-x: auto;
+}
+
+.output-body {
+  background: #0a0c10;
+  padding: 16px 24px;
+  font-family: 'Consolas','Monaco','Courier New',monospace;
+  font-size: .85rem;
+  line-height: 1.75;
+}
+
+.output-line {
+  display: block;
+  color: #4ade80;
+}
+
+.output-line::before {
+  content: '>>> ';
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.code-wrap {
+  display: flex;
+  overflow-x: auto;
+}
+
+.line-numbers-col {
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.03);
+  border-right: 1px solid rgba(48,105,152,0.25);
+  padding: 22px 14px 22px 16px;
+  font-family: 'Consolas','Monaco','Courier New',monospace;
+  font-size: .85rem;
+  line-height: 1.75;
+  color: #3d4a6a;
+  text-align: right;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+}
+
+.line-numbers-col span {
+  display: block;
+}
+
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  margin-top: 48px;
+}
+
+.section-label::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--python-yellow);
+  border-radius: 2px;
+}
+
+/***FOOTER***/
+	.footer-m365 {
+    background: linear-gradient(
+        180deg,
+        #0d1230 0%, 
+		#060a1a 100%
+    );
+    /*border-top: 1px solid #edebe9;*/
+    padding: 10px 5%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+  }
+  .footer-content{
+    max-width:900px;      /* mismo ancho que main */
+    margin:0 auto;
+    padding:10px 20px;
+}
+  .footer-m365-label {
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #7fb8d9;           /* azul-gris suave, legible sobre fondo oscuro, sin competir con el título */
+    opacity: 0.85;
+    margin-bottom: 15px;
+  }
+  .footer-m365-title {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: #eaf6ff;           /* blanco-azulado, casi blanco, para máximo contraste y jerarquía */
+    text-shadow: 0 0 12px rgba(58, 214, 245, 0.15); /* un glow cian sutil, conecta con el brillo de los logos */
+	margin-bottom: 0px;
+  }
+
+
+.footer-top-bar{
+  height:3px;
+  background:linear-gradient(90deg,#0a2e6b 0%,#1a55d6 45%,#11c9f5 100%);
+}
+
+.footer-bottom-bar{
+  height:3px;
+  background:linear-gradient(90deg,#11c9f5 0%,#1a55d6 55%,#0a2e6b 100%);
+}
+
+.footer-banner{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:0px 0px;
+  padding-bottom: 10px;
+}
+.footer-logo-space{
+  /*width:55px;
+  height:65px;*/
+  display:flex;
+  flex-direction: row;   /* logo arriba, nombre abajo, en vez de lado a lado */
+  align-items:center;
+  justify-content:center;
+}
+.footer-logo-space img{
+  filter: drop-shadow(0 0 6px rgba(58, 214, 245, 0.25));
+  height: 34px;
+  width: auto;
+}
+.footer-logo-space .name{
+  font-size: 1rem;
+  font-weight:700;
+  background: linear-gradient(to right, #0a3d91, #1a6dd4, #3ad6f5);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.footer-divider{
+  width:2px;
+  height:60px;
+  background:linear-gradient(to bottom,#0a2e6b,#1a55d6,#11c9f5);
+}
+.footer-text{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  flex-wrap:wrap;
+}
+.footer-text .label{
+  font-size: 1rem;
+  font-weight:700;
+  padding-left: 25px;
+  color:#8fb8d9;
+}
+.footer-text .name{
+  font-size: 1rem;
+  font-weight:700;
+  /* background:linear-gradient(to right, #0a3d91, #1a6dd4); */
+  background: repeating-linear-gradient(to right, #0a3d91 0%, #1a6dd4 55%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+	</style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" rel="stylesheet"/>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <svg class="python-logo-svg" viewBox="0 0 256 255" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="pyBlueGrad" x1="12.961%" y1="0.475%" x2="99.844%" y2="99.675%"><stop offset="0%" stop-color="#387EB8"/><stop offset="100%" stop-color="#366994"/></linearGradient>
+                    <linearGradient id="pyYellowGrad" x1="12.961%" y1="0.475%" x2="99.844%" y2="99.675%"><stop offset="0%" stop-color="#FFD43B"/><stop offset="100%" stop-color="#FFE873"/></linearGradient>
+                </defs>
+                <path d="M126.916 0C62.366 0 66.173 28.423 66.173 28.423L66.274 57.564H128.183V68.615H31.131C31.131 68.615 0.085 65.185 0.085 125.675C0.085 186.164 26.773 185.833 26.773 185.833H53.592V158.615C53.592 158.615 53.238 131.22 81.577 131.22H184.388C184.388 131.22 209.822 131.832 209.822 105.038V35.156C209.822 35.156 213.486 0 126.916 0ZM93.314 20.983C99.709 20.983 104.897 26.17 104.897 32.565C104.897 38.96 99.709 44.147 93.314 44.147C86.919 44.147 81.733 38.96 81.733 32.565C81.733 26.17 86.919 20.983 93.314 20.983Z" fill="url(#pyBlueGrad)"/>
+                <path d="M128.76 254.684C193.309 254.684 189.503 226.261 189.503 226.261L189.402 197.12H127.493V186.069H224.545C224.545 186.069 255.591 189.499 255.591 129.01C255.591 68.52 228.903 68.851 228.903 68.851H202.084V96.07C202.084 96.07 202.438 123.464 174.099 123.464H71.289C71.289 123.464 45.854 122.852 45.854 149.646V219.528C45.854 219.528 42.19 254.684 128.76 254.684ZM162.361 233.701C155.966 233.701 150.779 228.514 150.779 222.119C150.779 215.724 155.966 210.537 162.361 210.537C168.756 210.537 173.942 215.724 173.942 222.119C173.942 228.514 168.756 233.701 162.361 233.701Z" fill="url(#pyYellowGrad)"/>
+            </svg>
+        </div>
+        <h1>Fundamentos de Programación en <span class="blue">Python</span></h1>
+        <p class="text-center">
+			Tutorial Interactivo Completo · Aprende las <span class="yellow">colecciones</span>
+		</p>
+    </header>
+
+    <nav>
+        <div class="nav-container">
+            <button class="nav-btn active" onclick="goToSection(0)">🏠 Inicio</button>
+            <button class="nav-btn" onclick="goToSection(1)">1 📋 Listas</button>
+			<button class="nav-btn" onclick="goToSection(2)">2 🔒 Tuplas</button>
+            <button class="nav-btn" onclick="goToSection(3)">3 🧮 Conjuntos</button>
+			<button class="nav-btn" onclick="goToSection(4)">4 🔑 Diccionarios</button>
+			<button class="nav-btn" onclick="goToSection(5)">5 📖 Comparativa</button>          
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-text" id="progressText">Sección 1 de 6</div>
+    </nav>
+
+    <main>
+		<!-- ================================================== -->
+		<!-- ===================== INICIO ===================== -->
+		<!-- ================================================== -->
+        <div class="section active" id="section-0">           			
+			<div class="section-header">
+				<div class="section-icon icon-blue">🏠</div>
+				<div class="section-header-text">
+					<h2>Colecciones</h2>
+					<p>Estructuras de datos que permiten almacenar y organizar múltiples valores en una sola variable</p>
+				</div>
+			</div>
+			
+			<div class="card">		
+				<p>
+					Las colecciones son estructuras de datos que permiten almacenar y organizar múltiples valores dentro de 
+					una sola variable. En lugar de crear una variable para cada dato, una colección permite agrupar elementos 
+					relacionados para facilitar su manipulación, procesamiento y almacenamiento.
+					<br><br>
+					Los valores almacenados pueden ser:
+				</p>
+				<ul style="padding-left: 40px;">
+					<li>enteros</li>
+					<li>flotantes</li>
+					<li>cadenas</li>
+					<li>booleanos</li>
+					<li>objetos</li>
+					<li>otras colecciones</li>
+				</ul>
+				<br>
+				<p>
+					Las colecciones son fundamentales en Python porque permiten trabajar con conjuntos de datos de manera 
+					eficiente, realizar búsquedas, recorridos, modificaciones y aplicar algoritmos sobre múltiples elementos.
+				</p>
+			</div>
+			
+			
+			<div class="card">
+				<h3>¿Por qué son importantes las colecciones?</h3>
+				<ul style="padding-left: 40px;">
+					<li style="text-align: justify;">
+						<strong>Flexibilidad de tipos:</strong> En su mayoría, las colecciones en Python son heterogéneas, lo que significa que puedes mezclar diferentes tipos de datos (números, textos, booleanos e incluso otras colecciones) dentro del mismo contenedor.
+					</li>
+					<li style="text-align: justify;">
+						<strong>Estructuración del mundo real:</strong> Te permiten modelar datos complejos. Por ejemplo, una lista de compras, las coordenadas de un mapa, los datos de un usuario o un inventario de productos.
+					</li>
+					<li style="text-align: justify;">
+						<strong>Optimización:</strong> Python incluye métodos optimizados "bajo el capó" para buscar, ordenar, añadir o eliminar elementos de estas colecciones de forma muy rápida.
+					</li>
+				</ul>
+			</div>
+			
+			
+			<div class="card">
+				<h3>Las 4 Colecciones Integradas (Built-in)</h3>
+				<p>
+					Cada una tiene su propia naturaleza, comportamiento y casos de uso ideales
+				</p>
+				<ul style="padding-left: 40px;">
+					<li><strong>Lista</strong></li>
+					<li><strong>Tupla</strong></li>
+					<li><strong>Conjunto</strong></li>
+					<li><strong>Diccionario</strong></li>
+				</ul>
+			</div>
+			
+			
+			<div class="card">
+				<h3>Conceptos clave</h3>
+				<p>
+					Antes de estudiar cada colección en detalle, es necesario entender un conjunto de <strong>conceptos fundamentales</strong> que definen el comportamiento, las reglas y las capacidades de cada estructura de datos.
+					<br><br>
+					Conocerlos de antemano te permitirá <strong>entender por qué cada colección existe</strong>, cuándo conviene usarla y qué limitaciones tiene, en lugar de simplemente memorizar su sintaxis.
+				</p>				
+			</div>
+			
+			
+			<div class="card">
+				<h3>1. 📋 Ordenamiento (Ordered vs Unordered)</h3>
+				<p>
+					Hace referencia a si los elementos <strong>mantienen un orden de inserción</strong> definido y predecible.
+				</p>
+				<ul style="padding-left: 40px;">
+					<li style="text-align: justify;">
+						<strong>Ordenada:</strong> los elementos conservan la posición en la que fueron agregados. Si insertas A, B, C, siempre aparecerán en ese orden.
+					</li>
+					<li style="text-align: justify;">
+						<strong>No ordenada:</strong> los elementos no garantizan ningún orden específico. Python puede almacenarlos internamente de cualquier forma.
+					</li>
+				</ul>
+				<p>
+					Esto es importante cuando necesitas acceder a elementos por su posición o cuando el orden de los datos importa.
+				</p>
+			</div>
+			
+			
+			<div class="card">
+				<h3>2. 🔒 Mutabilidad (Mutable vs Inmutable)</h3>
+				<p>
+					Define si una colección <strong>puede ser modificada</strong> después de haber sido creada.
+				</p>
+				<ul style="padding-left: 40px;">
+					<li style="text-align: justify;">
+						<strong>Mutable:</strong> puedes agregar, eliminar o cambiar sus elementos en cualquier momento.
+					</li>
+					<li style="text-align: justify;">
+						<strong>Inmutable:</strong> una vez creada, su contenido queda fijo. Cualquier intento de modificarla 
+						generará un error.
+					</li>
+				</ul>
+				<p>
+					La inmutabilidad aporta seguridad y estabilidad a los datos cuando no deben cambiar.
+				</p>
+			</div>
+			
+			
+			<div class="card">
+				<h3>3. 🔑 Indexación (Indexed vs Non-indexed)</h3>
+				<p>
+					Se refiere a si los elementos tienen una <strong>posición numérica</strong> (índice) que permite acceder a ellos directamente.
+				</p>
+				<ul style="padding-left: 40px;">
+					<li style="text-align: justify;">
+						<strong>Indexada:</strong> cada elemento tiene un índice que comienza en 0. Puedes acceder a cualquier elemento con <code>coleccion[0]</code>, <code>coleccion[1]</code>, etc.
+					</li>
+					<li style="text-align: justify;">
+						<strong>No indexada:</strong> los elementos no tienen posición numérica asignada, por lo que no puedes acceder a ellos mediante un índice.
+					</li>
+				</ul>
+				<p>
+					Sin indexación, el acceso a elementos individuales funciona de forma distinta, por ejemplo, mediante claves o iteración.
+				</p>
+			</div>
+			
+			
+			<div class="card">
+				<h3>4. 🚫 Duplicados (Allows Duplicates vs Unique)</h3>
+				<p>
+					Define si una colección <strong>acepta valores repetidos</strong> o exige que todos sus elementos sean únicos.
+				</p>
+				<ul style="padding-left: 40px;">
+					<li style="text-align: justify;">
+						<strong>Permite duplicados:</strong> puedes tener el mismo valor varias veces dentro de la colección.
+					</li>
+					<li style="text-align: justify;">
+						<strong>Solo únicos:</strong> si intentas agregar un elemento que ya existe, simplemente se ignora, no genera error.
+					</li>
+				</ul>
+				<p>
+					Las colecciones que exigen unicidad son muy útiles para eliminar repeticiones o verificar existencia de elementos.
+				</p>
+			</div>
+			
+			
+			<div class="card">
+				<h3>5. 🗝️ Pares Clave-Valor (Key-Value pairs)</h3>
+				<p>
+					Algunas colecciones no almacenan valores sueltos, sino que los asocian a una <strong>clave identificadora</strong> única.
+				</p>
+				<ul style="padding-left: 40px;">
+					<li style="text-align: justify;">
+						En lugar de acceder por índice numérico, accedes por una clave personalizada: <code>coleccion["nombre"]</code>.
+					</li>
+					<li style="text-align: justify;">
+						Las claves deben ser únicas; los valores pueden repetirse.
+					</li>
+				</ul>
+				<p>
+					Este concepto es exclusivo de los diccionarios y transforma por completo la forma de organizar y consultar datos.
+				</p>
+			</div>
+			
+			
+			<div class="card">
+				<h3>6. ⚙️ Hashabilidad (Hashable vs Unhashable)</h3>
+				<p>
+					Un objeto es <strong>hashable</strong> cuando Python puede calcular un valor hash interno fijo a partir de él. Esto es necesario para que un elemento pueda usarse como <strong>clave en un diccionario o como elemento de un conjunto</strong>.
+				</p>
+				<ul style="padding-left: 40px;">
+					<li style="text-align: justify;">
+						<strong>Hashable:</strong> tipos inmutables como números, cadenas y tuplas.
+					</li>
+					<li style="text-align: justify;">
+						<strong>Unhashable:</strong> tipos mutables como listas o diccionarios, que no pueden usarse como claves.
+					</li>
+				</ul>
+				<p>
+					Si alguna vez ves el error <code>unhashable type</code>, este concepto es la razón.
+				</p>
+			</div>
+			
+			
+			<div class="card">
+				<h3>7. 🔄 Iterabilidad (Iterable vs Iterator)</h3>
+				<p>
+					La <strong>iterabilidad</strong> es la capacidad de recorrer los elementos de una colección uno a uno. Python la formaliza con los protocolos internos <code>__iter__</code> y <code>__next__</code>.
+				</p>
+				<ul style="padding-left: 40px;">
+					<li style="text-align: justify;">
+						<strong>Iterable:</strong> objeto que puede recorrerse, como todas las colecciones.
+					</li>
+					<li style="text-align: justify;">
+						<strong>Iterador:</strong> objeto que recuerda en qué posición va durante el recorrido.
+					</li>
+				</ul>
+				<p>
+					La iterabilidad es <strong>universal</strong> en todas las colecciones y es la base de ciclos, comprensiones y funciones de orden superior.
+				</p>
+			</div>
+			
+			<div class="tip-box">
+				<div class="tip-title">💡 Dato importante</div>
+				<p>
+					...
+				</p>
+			</div>
+			
+			<div class="warning-box">
+				<div class="warning-title">⚠️ Precaución:</div>
+				<p>
+					...
+				</p>
+			</div>
+			
+			<div class="note-box">
+				<div class="note-title">📝 Nota:</div>
+				<p>
+					...
+				</p>
+			</div>
+			
+			
+            
+            <div class="nav-buttons"><button class="nav-arrow-btn" disabled>🏠 Inicio</button><button class="nav-arrow-btn" onclick="goToSection(1)">Siguiente: Listas →</button></div>
+        </div>
+		
+		<!-- ================================================================ -->
+		<!-- ============================ LISTAS ============================ -->
+		<!-- ================================================================ -->
+        <div class="section" id="section-1">           			
+			<div class="section-header">
+				<div class="section-icon icon-blue">📂</div>
+				<div class="section-header-text">
+					<h2>Listas (List)</h2>
+					<p>Secuencias ordenadas y modificables</p>
+				</div>
+			</div>
+			
+			<div class="card">
+				<p>
+					Una lista es una <strong>colección ordenada y mutable</strong> de elementos.
+				</p>
+				<ul style="padding-left: 40px;">
+					<li>
+						<strong>Ordenada:</strong> Significa que los elementos tienen un orden específico y fijo. 
+						Cada elemento tiene una posición única llamada <strong>índice</strong> (comenzando desde el <code>0</code>).
+					</li>
+					<li>
+						<strong>Mutable:</strong> las listas se pueden modificar después de haber sido creadas 
+						(puedes añadir, eliminar o cambiar elementos).
+					</li>
+					<li>
+						<strong>Dinámica:</strong> No necesitas definir un tamaño fijo al crearla; la lista crece o 
+						se encoge automáticamente.
+					</li>
+					<li>
+						<strong>Heterogénea:</strong> Una sola lista puede contener diferentes tipos de datos al mismo 
+						tiempo (enteros, strings, booleanos, e incluso otras listas).
+					</li>
+					<li>
+						<strong>Permite duplicados:</strong> Una lista puede contener múltiples elementos con el mismo 
+						valor exacto. Cada uno será tratado de manera independiente gracias a que se diferencian por su 
+						posición (índice).
+					</li>
+				</ul>
+			</div>
+			
+			
+			<div class="card">
+				<h3>🔤 Sintaxis y Creación de listas:</h3>
+				<p>
+					Para crear una lista en Python, se encierran los elementos entre <strong>corchetes</strong> 
+					<code>[]</code> y se separan por comas:
+				</p>
+<pre>
+<code class="language-python">nombre_lista = [elemento1, elemento2, ..., elemento_n]</code>
+</pre>
+				<p>
+					También se puede usar el constructor <code>list()</code>.
+				</p>
+				<h3 class="sub">💻 Ejemplos:</h3>
+<pre>
+<code class="language-python"># Lista vacía
+lista_vacia = []       # es la forma estándar y más idiomática
+otra_vacia = list()    # llama al constructor de la clase list. 
+                       # Se utiliza para crear una lista a partir de otro iterable
+
+# Lista con valores iniciales
+numeros = [1, 2, 3, 4, 5]</code>
+</pre>
+			</div>
+			
+			<div class="card">
+				<h3 class="sub">💾 ¿Qué puede almacenar una lista?</h3>
+				<p>
+					Prácticamente cualquier objeto de Python.
+				</p>
+				<br>
+				<h3 class="sub">💻 Ejemplos:</h3>
+<pre>
+<code class="language-python">edades = [18, 20, 22]                 # enteros
+
+temperaturas = [20.5, 21.7, 22.8]     # flotantes
+
+colores = ["rojo", "verde", "azul"]   # cadenas
+
+valores = [True, False, True]         # booleanos
+
+matriz = [
+           [1, 2],
+           [3, 4]
+         ]							  # otras listas</code>
+</pre>
+			</div>
+			
+			
+			<div class="card">
+				<h3 class="sub">📍Indexación (Acceso individual)</h3>
+				<p>
+					ara acceder a los elementos de una lista, utilizamos los índices numéricos.
+					<br>
+					Python apoya la indexación positiva (de izquierda a derecha empezando en 0) y negativa 
+					(de derecha a izquierda empezando en -1).
+				</p>
+				<br>
+				<h3 class="sub">💻 Ejemplo:</h3>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">animales = ["perro", "gato", "elefante", "jirafa"]
+
+print(animales)         # Toda la lista
+print(animales[0])      # Primer elemento
+print(animales[-1])     # Último elemento
+print(animales[2])      # Tercer elemento
+
+animales[2] = "delfín"  # Modifica el tercer elemento
+
+print(animales)         # Toda la lista
+</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+['perro', 'gato', 'elefante', 'jirafa']
+perro
+jirafa
+elefante
+['perro', 'gato', 'delfín', 'jirafa']
+</pre>
+					</div>
+				</div>
+			</div>
+				
+			<div class="card">
+				<h3 class="sub">🍕 Slicing (Rebanado/Sublistas)</h3>
+				<p>
+					Permite extraer una porción de la lista utilizando la sintaxis <code>lista[inicio:fin:paso]</code>. 
+					El índice de <code>fin</code> no se incluye.
+				</p>
+				
+				
+				<table class="comparison-table">
+					<tr>
+						<th>Sintaxis</th>
+						<th>Descripción</th>
+						<th>Ejemplo</th>
+						<th>Resultado</th>
+					</tr>
+					<tr>
+						<td><code>lista[i]</code></td>
+						<td>Elemento en el índice <code>i</code></td>
+						<td><code>l[2]</code></td>
+						<td>Elemento en posición 2</td>
+					</tr>
+					<tr>
+						<td><code>lista[i:j]</code></td>
+						<td>Desde el índice <code>i</code> hasta <code>j</code> (sin incluir <code>j</code>)</td>
+						<td><code>l[1:4]</code></td>
+						<td>Elementos 1, 2, 3</td>
+					</tr>
+					<tr>
+						<td><code>lista[:j]</code></td>
+						<td>Desde el inicio hasta <code>j</code> (sin incluir)</td>
+						<td><code>l[:3]</code></td>
+						<td>Elementos 0, 1, 2</td>
+					</tr>
+					<tr>
+						<td><code>lista[i:]</code></td>
+						<td>Desde <code>i</code> hasta el final</td>
+						<td><code>l[2:]</code></td>
+						<td>Del índice 2 en adelante</td>
+					</tr>
+					<tr>
+						<td><code>lista[:]</code></td>
+						<td>Copia completa de la lista</td>
+						<td><code>l[:]</code></td>
+						<td>Todos los elementos</td>
+					</tr>
+					<tr>
+						<td><code>lista[i:j:k]</code></td>
+						<td>Desde <code>i</code> hasta <code>j</code>, con paso <code>k</code></td>
+						<td><code>l[0:10:2]</code></td>
+						<td>Elementos de 2 en 2</td>
+					</tr>
+					<tr>
+						<td><code>lista[::k]</code></td>
+						<td>Toda la lista con paso <code>k</code></td>
+						<td><code>l[::2]</code></td>
+						<td>Elementos en índices pares</td>
+					</tr>
+					<tr>
+						<td><code>lista[::-1]</code></td>
+						<td>Lista invertida</td>
+						<td><code>l[::-1]</code></td>
+						<td>Lista al revés</td>
+					</tr>
+					<tr>
+						<td><code>lista[-n:]</code></td>
+						<td>Últimos <code>n</code> elementos</td>
+						<td><code>l[-3:]</code></td>
+						<td>Los últimos 3 elementos</td>
+					</tr>
+					<tr>
+						<td><code>lista[:-n]</code></td>
+						<td>Todos menos los últimos <code>n</code></td>
+						<td><code>l[:-2]</code></td>
+						<td>Todos excepto los últimos 2</td>
+					</tr>
+					<tr>
+						<td><code>lista[-n:-m]</code></td>
+						<td>Rango usando índices negativos <code>n</code> y <code>m</code></td>
+						<td><code>l[-5:-2]</code></td>
+						<td>Del 5to al 2do desde el final</td>
+					</tr>
+				</table>
+				
+				<p>
+					<strong>Notas clave</strong>
+				</p>
+
+
+				<ul style="padding-left: 45px;">
+					<li>
+						Los índices son de base <code>0</code> y <code>j</code> no se incluye en el resultado.
+					</li>
+					<li>
+						Los índices negativos cuentan desde el final (<code>-1</code> es el último elemento).
+					</li>
+					<li>
+						Un paso (<code>k</code>) negativo recorre la lista en reversa.
+					</li>
+					<li>
+						Si un índice se sale de rango, Python no lanza error: simplemente ajusta el resultado (a diferencia del acceso directo <code>lista[i]</code>).
+					</li>
+				</ul>
+				
+				
+			</div>
+				
+				
+				
+			<div class="card">
+				<h3 class="sub">💻 Ejemplo:</h3>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">numeros = [0, 10, 20, 30, 40, 50, 60]
+
+print(numeros[1:4])    # Índices 1, 2 y 3
+print(numeros[:3])     # Desde el inicio hasta el índice 2
+print(numeros[4:])     # Desde el índice 4 hasta el final
+print(numeros[::2])    # De principio a fin, de 2 en 2
+print(numeros[::-1])   # Invierte la lista
+print(numeros[-3:])    # Los últimos tres elementos
+print(numeros[1:6:2])  # Desde el índice 1 hasta el 6, de 2 en 2</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+[10, 20, 30]
+[0, 10, 20]
+[40, 50, 60]
+[0, 20, 40, 60]
+[60, 50, 40, 30, 20, 10, 0]
+[40, 50, 60]
+[10, 30, 50]
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="card">
+				<h3>🚶 Recorrido de listas</h3>
+				<p>
+					La forma más eficiente y limpia de recorrer una lista es con un ciclo <code>for</code>:
+				</p>
+				
+				<br>
+				<h3 class="sub">💻 Ejemplo: Con índices</h3>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">numeros = [10, 20, 30]
+
+for i in range(len(numeros)):
+    print(numeros[i])</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+10
+20
+30
+</pre>
+					</div>
+				</div>
+				
+				<br>
+				<h3 class="sub">💻 Ejemplo: Directamente</h3>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">numeros = [10, 20, 30]
+
+for numero in numeros:
+    print(numero)</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+10
+20
+30
+</pre>
+					</div>
+				</div>
+				
+				<br>
+				<h3 class="sub">
+					💻 Ejemplo: Si necesitas tanto el <code>índice</code> como el <code>valor</code>, 
+					usa <code>enumerate()</code>.
+				</h3>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">numeros = [10, 20, 30]
+
+for indice, numero in enumerate(numeros):
+    print(f"{indice}: {numero}")</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+0: 10
+1: 20
+2: 30
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="card">
+				<h3>⚙️ Operadores</h3>
+				<p>
+					Las listas en Python admiten diversos operadores que permiten realizar operaciones comunes de forma 
+					sencilla y eficiente. Estos operadores pueden utilizarse para combinar <strong>listas, repetir sus 
+					elementos, comprobar la existencia de valores, comparar listas entre sí y acceder a elementos o 
+					subconjuntos de elementos</strong>.
+					<br><br>
+					Algunos operadores devuelven una nueva lista como resultado, mientras que otros producen un valor 
+					booleano (<code>True</code> o <code>False</code>) o modifican directamente la lista existente. Conocer 
+					estos operadores es fundamental para manipular listas de manera rápida y aprovechar al máximo las 
+					capacidades que ofrece Python para el trabajo con colecciones de datos.
+				</p>
+				
+				<table class="comparison-table table-compact">
+					<thead>
+						<tr>
+							<th>Operador</th>
+							<th>Descripción</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><code>+</code></td>
+							<td>Concatena dos listas y devuelve una <strong>nueva lista</strong>.</td>
+						</tr>
+						<tr>
+							<td><code>*</code></td>
+							<td>Repite los elementos de una lista y devuelve una <strong>nueva lista</strong>.</td>
+						</tr>
+						<tr>
+							<td><code>in</code></td>
+							<td>Verifica si un elemento pertenece a la lista y devuelve <strong>True</strong> o <strong>False</strong>.</td>
+						</tr>
+						<tr>
+							<td><code>not in</code></td>
+							<td>Verifica si un elemento no pertenece a la lista y devuelve <strong>True</strong> o <strong>False</strong>.</td>
+						</tr>
+						<tr>
+							<td><code>==</code></td>
+							<td>Comprueba si dos listas tienen los mismos elementos en el mismo orden y devuelve <strong>True</strong> o <strong>False</strong>.</td>
+						</tr>
+						<tr>
+							<td><code>!=</code></td>
+							<td>Comprueba si dos listas son diferentes y devuelve <strong>True</strong> o <strong>False</strong>.</td>
+						</tr>
+						<tr>
+							<td><code>&lt;</code></td>
+							<td>Determina si una lista es menor que otra mediante comparación lexicográfica y devuelve <strong>True</strong> o <strong>False</strong>.</td>
+						</tr>
+						<tr>
+							<td><code>&gt;</code></td>
+							<td>Determina si una lista es mayor que otra mediante comparación lexicográfica y devuelve <strong>True</strong> o <strong>False</strong>.</td>
+						</tr>
+						<tr>
+							<td><code>&lt;=</code></td>
+							<td>Determina si una lista es menor o igual que otra mediante comparación lexicográfica y devuelve <strong>True</strong> 
+							<br>o <strong>False</strong>.</td>
+						</tr>
+						<tr>
+							<td><code>&gt;=</code></td>
+							<td>Determina si una lista es mayor o igual que otra mediante comparación lexicográfica y devuelve <strong>True</strong> 
+							<br>o <strong>False</strong>.</td>
+						</tr>
+						<tr>
+							<td><code>+=</code></td>
+							<td>Concatena otra lista y asigna el resultado a la misma lista modificándola.</td>
+						</tr>
+						<tr>
+							<td><code>*=</code></td>
+							<td>Repite la lista y asigna el resultado a la misma lista modificándola.</td>
+						</tr>
+						<tr>
+							<td><code>[]</code></td>
+							<td>Accede a un elemento mediante su índice y devuelve dicho elemento.</td>
+						</tr>
+						<tr>
+							<td><code>[:]</code></td>
+							<td>Obtiene una porción (slicing) de la lista y devuelve una <strong>nueva lista</strong>.</td>
+						</tr>
+						<tr>
+							<td><code>[::]</code></td>
+							<td>Obtiene una porción de la lista utilizando un paso determinado y devuelve una <strong>nueva lista</strong>.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+				
+				
+				
+				
+				
+				
+			<div class="card">
+				<p>
+					El operador + une dos listas y crea una nueva lista que contiene los elementos de ambas.
+				</p>
+				<h3 class="sub">💻 Ejemplo: Concatenación (+)</h3>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">a = [1, 2]
+b = [3, 4]
+
+c = a + b
+
+print(c)</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+[1, 2, 3, 4]
+</pre>
+					</div>
+				</div>
+			</div>
+				
+			<div class="card">
+				<h3 class="sub">💻 Ejemplo: Repetición (*)</h3>
+				<p>
+					El operador * toma una lista y la repite un número determinado de veces, generando una nueva lista más larga con el contenido original repetido consecutivamente.
+				</p>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">lista = [0] * 5
+
+print(lista)</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+[0, 0, 0, 0, 0]
+</pre>
+					</div>
+				</div>
+			</div>
+				
+			<div class="card">
+				<h3 class="sub">💻 Ejemplo: Pertenencia (in y not in)</h3>
+				<p>
+					Los operadores in y not in sirven para comprobar si un elemento pertenece (o no) a una lista.
+				</p>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">frutas = ["manzana", "pera", "plátano", "uva"]
+
+if "pera" in frutas:
+    print("¡Sí hay pera!")
+
+if "kiwi" not in frutas:
+    frutas.append("kiwi")   # agrega kiwi a la lista</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+¡Sí hay pera!
+['manzana', 'pera', 'plátano', 'uva', 'kiwi']
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			
+			
+			
+			<div class="card">
+				<h3>Métodos y Funciones</h3>
+				<p>
+					Para manipular, analizar y transformar la información almacenada en las listas, Python nos provee 
+					de dos herramientas fundamentales: <strong>los métodos de objeto</strong> y 
+					<strong>las funciones integradas</strong>.
+					<br>
+					Aunque a menudo se usan como sinónimos en el lenguaje cotidiano, en Python tienen una diferencia 
+					técnica importante que debes conocer:
+				</p>
+				<ul style="padding-left: 40px;">
+					<li style="text-align: justify;">
+						<strong>Los Métodos (<code>lista.metodo()</code>):</strong> Son funciones que pertenecen 
+						exclusivamente al objeto tipo lista. Se invocan utilizando la "nomenclatura de punto" después 
+						del nombre de tu variable. La mayoría de ellos modifica la lista directamente en la memoria (in-place).
+					</li>
+					<li style="text-align: justify;">
+						<strong>Las Funciones Integradas (<code>funcion(lista)</code>):</strong> Son herramientas nativas 
+						globales de Python que aceptan una lista como argumento entre sus paréntesis. Estas no alteran la 
+						lista original, sino que analizan su contenido para devolver un dato nuevo.
+					</li>
+				</ul>
+			</div>	
+			
+			
+			<div class="card">
+				<h3>🔧 Métodos</h3>
+				<p>
+					Python ofrece una gran variedad de métodos de la lista para manipular listas.
+				</p>
+				<table class="comparison-table table-compact table-methods">
+					<thead>
+						<tr>
+							<th>Método</th>
+							<th>Descripción</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><code>.append(elemento)</code></td>
+							<td>Agrega un único elemento al <strong>final</strong> de la lista.</td>
+						</tr>
+						<tr>
+							<td><code>.extend(iterable)</code></td>
+							<td>Agrega todos los elementos de otra lista (o iterable) al <strong>final</strong> de la lista actual.</td>
+						</tr>
+						<tr>
+							<td><code>.insert(índice, elemento)</code></td>
+							<td>Inserta un elemento en una <strong>posición específica</strong> desplazando el resto.</td>
+						</tr>
+						<tr>
+							<td><code>.remove(elemento)</code></td>
+							<td>Busca y elimina la <strong>primera aparición</strong> del elemento especificado.</td>
+						</tr>
+						<tr>
+							<td><code>.pop(índice)</code></td>
+							<td>Elimina y <strong>devuelve</strong> el elemento en el índice indicado (si está vacío, elimina el último).</td>
+						</tr>
+						<tr>
+							<td><code>.clear()</code></td>
+							<td>Elimina <strong>todos</strong> los elementos de la lista, dejándola completamente vacía.</td>
+						</tr>
+						<tr>
+							<td><code>.sort()</code></td>
+							<td>Ordena los elementos de la lista de forma <strong>ascendente</strong> (o descendente si se indica).</td>
+						</tr>
+						<tr>
+							<td><code>.reverse()</code></td>
+							<td>Invierte el <strong>orden actual</strong> de los elementos dentro de la lista.</td>
+						</tr>
+						<tr>
+							<td><code>.index(elemento)</code></td>
+							<td>Devuelve el <strong>número de índice</strong> de la primera aparición del elemento buscado.</td>
+						</tr>
+						<tr>
+							<td><code>.count(elemento)</code></td>
+							<td>Cuenta cuántas veces <strong>se repite</strong> un elemento específico en la lista.</td>
+						</tr>
+						<tr>
+							<td><code>.copy()</code></td>
+							<td>Crea una <strong>copia idéntica e independiente</strong> (superficial) de la lista.</td>
+						</tr>
+					</tbody>
+					</table>
+			</div>
+			
+			
+			<div class="card">
+				<h3>📦 Funciones Integradas</h3>
+				<p>
+					Estas no son métodos de la lista, sino funciones nativas de Python que aceptan listas como argumento.
+					<br>
+					Estas son algunas de las funciones más usadas:
+				</p>
+				<table class="comparison-table table-compact">
+					<thead>
+						<tr>
+							<th>Función</th>
+							<th>Descripción</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><code>len(lista)</code></td>
+							<td>Devuelve la cantidad total de elementos (longitud).</td>
+						</tr>
+						<tr>
+							<td><code>max(lista)</code></td>
+							<td>Devuelve el elemento con el valor máximo.</td>
+						</tr>
+						<tr>
+							<td><code>min(lista)</code></td>
+							<td>Devuelve el elemento con el valor mínimo.</td>
+						</tr>
+						<tr>
+							<td><code>sum(lista)</code></td>
+							<td>Suma todos los elementos (solo para listas numéricas).</td>
+						</tr>
+						<tr>
+							<td><code>sorted(lista)</code></td>
+							<td>Devuelve una <strong>nueva</strong> lista ordenada, sin alterar la original.</td>
+						</tr>
+						<tr>
+							<td><code>any(lista)</code></td>
+							<td>Devuelve <code>True</code> si <strong>al menos un</strong> elemento es verdadero.</td>
+						</tr>
+						<tr>
+							<td><code>all(lista)</code></td>
+							<td>Devuelve <code>True</code> si <strong>todos</strong> los elementos son verdaderos.</td>
+						</tr>
+						<tr>
+							<td><code>list(iterable)</code></td>
+							<td>Convierte otro tipo de dato (texto, tupla) en una lista.</td>
+						</tr>
+						<tr>
+							<td><code>enumerate(lista)</code></td>
+							<td>Devuelve un iterador con el <strong>índice</strong> y el <strong>valor</strong> de cada elemento.</td>
+						</tr>
+						<tr>
+							<td><code>zip(lista1, lista2)</code></td>
+							<td>Empareja los elementos de dos o más listas en tuplas.</td>
+						</tr>
+						<tr>
+							<td><code>filter(funcion, lista)</code></td>
+							<td>Filtra los elementos dejando solo los que cumplen una condición.</td>
+						</tr>
+						<tr>
+							<td><code>map(funcion, lista)</code></td>
+							<td>Aplica una función a cada uno de los elementos de la lista.</td>
+						</tr>
+						<tr>
+							<td><code>copy.deepcopy(lista)</code></td>
+							<td>Realiza una copia profunda (ideal para listas con listas anidadas).</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			
+			<div class="card">
+				<h3>⚡Comprensión de listas (List Comprehensions)</h3>
+				<p>
+					Es una forma concisa y "pythónica" de crear listas a partir de un iterable, en una sola línea, en lugar de usar un ciclo <code>for</code> tradicional con <code>.append()</code>.
+				</p>
+				
+				<h3>📖 Sintaxis básica</h3>		
+<pre>
+<code class="language-python">[expresión for elemento in iterable]</code>
+</pre>
+			</div>
+				
+			
+			<div class="card">
+				<h3 class="sub">💻 Ejemplo comparativo: con ciclo <code>for</code> tradicional</h3>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">cuadrados = []
+for x in range(5):
+    cuadrados.append(x**2)
+
+print(cuadrados)</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+[0, 1, 4, 9, 16]
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="card">
+				<h3 class="sub">💻 Ejemplo comparativo: con comprehension de listas</h3>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">cuadrados = [x**2 for x in range(5)]
+
+print(cuadrados)</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+[0, 1, 4, 9, 16]
+</pre>
+					</div>
+				</div>
+				<p>
+					Se lee así:
+					<br>
+					"Para cada x en el rango del 0 al 4, calcula x elevado al cuadrado, y guarda ese resultado en la lista."
+					<br><br>
+					<strong>Desglose paso a paso</strong>
+				</p>
+				
+				<ol style="padding-left: 45px;">
+					<li>
+						for x in range(5) → Recorre los números 0, 1, 2, 3, 4, uno por uno.
+					</li>
+					<li>
+						x**2 (la expresión al inicio) → Por cada número, calcula su cuadrado (x multiplicado por sí mismo). El operador ** en Python significa "elevado a la potencia de".
+					</li>
+					<li>
+						Todos los números del rango se transforman y se agregan a la lista, sin excepción.
+					</li>
+				<ol>
+			</div>
+			
+			
+			<div class="card">
+				<h3>🛡️ Con condición (filtro)</h3>				
+				<h3>📖 Sintaxis básica</h3>
+				
+<pre>
+<code class="language-python">[expresión for elemento in iterable if condición]</code>
+</pre>
+			</div>
+			
+			
+			<div class="card">
+				<h3 class="sub">💻 Ejemplo:</h3>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python"># genera una lista del 0 al 9 solo con los números pares
+pares = [x for x in range(10) if x % 2 == 0]
+
+print(pares)</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+[0, 2, 4, 6, 8]
+</pre>
+					</div>
+				</div>
+				<p>
+					Se lee así:
+					<br>
+					"Toma cada x en el rango del 0 al 9, y guárdalo en la lista solo si x es divisible entre 2 (es decir, par)."
+					<br><br>
+					<strong>Desglose paso a paso</strong>
+				</p>
+				
+				<ol style="padding-left: 45px;">
+					<li>
+						for x in range(10) → Recorre los números 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, uno por uno.
+					</li>
+					<li>
+						if x % 2 == 0 → Por cada número, pregunta: "¿el residuo de dividir x entre 2 es igual a 0?" Si la respuesta es verdadera, el número <strong>pasa el filtro</strong>. Si es falsa, <strong>se descarta</strong> y no entra a la lista.
+					</li>
+					<li>
+						x (la expresión al inicio) → Es lo que se guarda en la lista cuando el número pasa el filtro. Aquí simplemente se guarda el número tal cual, sin transformarlo.
+					</li>
+					<li>
+						El resultado de ese if/else (ya sea "par" o "impar") es lo que se guarda en la lista, en lugar de guardar el número mismo.
+					</li>
+				<ol>
+			</div>
+			
+			
+			<div class="card">
+				<h3>✅ / ❌ Con if...else (condición como expresión)</h3>
+				<p>				
+					Aquí el if/else va antes del for, porque decide qué valor usar, no si se incluye o no:
+				</p>
+				<h3>📖 Sintaxis básica</h3>
+				
+<pre>
+<code class="language-python">[expresión_si_true if condición else expresión_si_false for elemento in iterable]</code>
+</pre>
+			</div>
+			
+			
+			<div class="card">
+				<h3 class="sub">💻 Ejemplo:</h3>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">resultado = ["par" if x % 2 == 0 else "impar" for x in range(5)]
+
+print(resultado)</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+['par', 'impar', 'par', 'impar', 'par']
+</pre>
+					</div>
+				</div>
+				<p>
+					Se lee de la siguiente manera, de derecha a izquierda en cuanto a la lógica:
+					<br>
+					"Para cada x en el rango del 0 al 4, si x es divisible entre 2 (es decir, par), agrega el texto 'par' a la lista; si no, agrega el texto 'impar'."
+					<br><br>
+					<strong>Desglose paso a paso</strong>
+				</p>
+				
+				<ol style="padding-left: 45px;">
+					<li>
+						for x in range(5) → Recorre los números 0, 1, 2, 3, 4, uno por uno.
+					</li>
+					<li>
+						x % 2 == 0 → Por cada número, pregunta: "¿el residuo de dividir x entre 2 es igual a 0?" Esto es lo que determina si un número es par.
+					</li>
+					<li>
+						"par" if ... else "impar" → Es una expresión condicional (como un mini if/else en una sola línea):
+						<ul>
+							<li>
+								Si la condición (x % 2 == 0) es verdadera → usa el texto "par".
+							</li>
+							<li>
+								Si es falsa → usa el texto "impar".	
+							</li>
+						</ul>
+					</li>
+					<li>
+						El resultado de ese if/else (ya sea "par" o "impar") es lo que se guarda en la lista, en lugar de guardar el número mismo.
+					</li>
+				<ol>
+			</div>
+			
+			
+			<div class="tip-box">
+				<div class="tip-title">💡 Ventajas:</div>
+				<ul style="padding-left: 45px;">
+					<li>
+						Más legible y compacta que un ciclo for con .append().
+					</li>
+					<li>
+						Más rápida en la mayoría de los casos, porque está optimizada internamente en C.
+					</li>
+					<li>
+						Expresa la intención de forma más directa: "quiero una lista de X para cada elemento".
+					</li>
+				</ul>
+			</div>
+			
+			
+			<div class="warning-box">
+				<div class="warning-title">⚠️ Cuando evitarla:</div>
+				<p>
+					Si la lógica se vuelve muy compleja o anidada (varios if/for combinados), es mejor usar un ciclo for normal para mantener la legibilidad.
+				</p>
+				<pre>
+<code class="language-python"># Difícil de leer:
+resultado = [x*y for x in range(5) if x > 1 for y in range(5) if y &lt; 3]</code>
+</pre>
+			</div>
+			
+            
+            <div class="nav-buttons"><button class="nav-arrow-btn" onclick="goToSection(0)">← Anterior</button><button class="nav-arrow-btn" onclick="goToSection(2)">Siguiente: Tuplas →</button></div>
+        </div>
+
+		<!-- ====================================================================== -->
+		<!-- =============================== TUPLAS =============================== -->
+		<!-- ====================================================================== -->
+        <div class="section" id="section-2">
+			<div class="section-header">
+				<div class="section-icon icon-blue">🔒</div>
+				<div class="section-header-text">
+					<h2>Tuplas</h2>
+					<p>Secuencias ordenadas e inmutables</p>
+				</div>
+			</div>
+			
+			<div class="card">
+				<p>
+					Una tupla es una <strong>colección ordenada e inmutable</strong> de elementos.
+				</p>
+				<ul style="padding-left: 40px;">
+					<li>
+						<strong>Ordenada:</strong> Significa que los elementos tienen un orden específico y fijo. 
+						Cada elemento tiene una posición única llamada <strong>índice</strong> (comenzando desde el <code>0</code>).
+					</li>
+					<li>
+						<strong>Inmutable:</strong> Una vez creada una tupla, <strong> no puedes modificar</strong>. No
+						puedes añadir, eliminar ni cambiar sus elementos.
+					</li>
+					<li>
+						<strong>Heterogénea:</strong> Una tupla puede contener diferentes tipos de datos al mismo 
+						tiempo (enteros, strings, booleanos, e incluso otras tuplas o listas).
+					</li>
+					<li>
+						<strong>Permite duplicados:</strong> Una tupla puede contener múltiples elementos con el mismo 
+						valor exacto. Cada uno será tratado de manera independiente gracias a que se diferencian por su 
+						posición (índice).
+					</li>
+				</ul>
+			</div>
+			
+			
+			<div class="warning-box">
+				<div class="warning-title">⚠️ Advertencia:</div>
+				<p>
+					La inmutabilidad es la característica más importante de las tuplas. Significa que no se pueden modificar 
+					sus elementos después de la creación.
+					<br><br>
+					Intentar modificar una tupla lanza un <code>TypeError</code>. Esto es intencional y es una de las 
+					ventajas de usar tuplas.
+				</p>
+<pre>
+<code class="language-python">t = (1, 2, 3)
+
+# ❌ Esto lanza TypeError
+t[0] = 99
+# TypeError: 'tuple' object does not support item assignment
+
+# ❌ No se pueden agregar elementos
+t.append(4)
+# AttributeError: 'tuple' object has no attribute 'append'</code>
+</pre>
+			</div>
+			
+			
+			<div class="note-box">
+				<div class="note-title">📝 Nota Importante:</div>
+				<p>
+					La inmutabilidad es <em>superficial</em>. Si una tupla contiene un objeto mutable (como una lista), 
+					ese objeto SÍ puede modificarse internamente. La referencia está fija, no el objeto al que apunta.
+				</p>
+<pre>
+<code class="language-python">t = (1, [2, 3], 4)
+
+# ❌ No se puede reemplazar la lista
+t[1] = [9, 9]  # TypeError
+
+# ✅ Sí se puede modificar LA LISTA interna
+t[1].append(99)
+print(t)  # (1, [2, 3, 99], 4)</code>
+</pre>
+			</div>
+			
+			
+			<div class="card">
+				<h3>¿Por qué usar tuplas?</h3>
+				<p>
+					Si no se pueden modificar, ¿para qué sirven?
+				</p>
+				<ol style="padding-left: 40px;">
+					<li>
+						<strong>Seguridad de datos:</strong> Si tienes datos que no deben cambiar (como los meses del año,  
+						las coordenadas de un mapa, configuraciones, resultados de funciones, datos que no deben modificarse
+						accidentalmente), usas una tupla para evitar "accidentes" en el código.
+					</li>
+					<li>
+						<strong>Rendimiento:</strong> Al ser inmutables, Python las procesa más rápido en memoria que a las listas.
+					</li>
+					<li>
+						<strong>Claves de diccionarios:</strong> Debido a que su valor no cambia (son hashables), puedes 
+						usar tuplas como claves en un diccionario, algo que no puedes hacer con las listas.
+					</li>
+				</ol>
+			</div>
+			
+			<div class="card">
+				<h3>🔤 Sintaxis y Creación</h3>
+				<p>
+					Para crear una tupla en Python, se encierran los elementos entre <strong>paréntesis</strong> 
+					<code>()</code> y se separan por comas:
+				</p>
+<pre>
+<code class="language-python">nombre_tupla = [elemento1, elemento2, ..., elemento_n]</code>
+</pre>
+				<p>
+					También se puede usar el constructor <code>tuple()</code>.
+				</p>
+				<h3 class="sub">💻 Ejemplos:</h3>
+<pre>
+<code class="language-python"># Tupla vacía
+tupla_vacia = ()
+otra_vacia = tuple()
+
+# Tupla de un solo elemento (¡OJO con la coma!)
+tupla_un_elemento = (5,)
+
+# Tupla con elementos
+colores = ("rojo", "verde", "azul")
+
+# Creación sin paréntesis (Tuple Packing / Empaquetado)
+otra_tupla = 10, 20, 30  # Python detecta automáticamente que es una tupla
+
+# Usando el constructor tupla()
+tupla_desde_lista = tuple([1, 2, 3])</code>
+</pre>
+			</div>
+			
+			
+			<div class="warning-box">
+				<div class="warning-title">⚠️ Precaución:</div>
+				<p>
+					Si creas una tupla como <code>mi_tupla = (5)</code>, su tipo será <code>int</code>, no <code>tuple</code>. 
+					Para que Python la reconozca como tupla de un solo elemento, <strong>siempre</strong> debes incluir una 
+					coma: <code>mi_tupla = (5,)</code>.
+				</p>
+			</div>
+			
+			<div class="card">
+				<h3>Indexación</h3>
+				<p>
+					Python apoya la indexación positiva (de izquierda a derecha empezando en 0) y negativa 
+					(de derecha a izquierda empezando en -1).
+				</p>
+				<br>
+				<h3 class="sub">💻 Ejemplo:</h3>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">frutas = ("manzana", "plátano", "cereza", "naranja", "limón")
+
+print(frutas)      # Toda la tupla 
+
+# Indexación positiva
+print(frutas[0])   # Primer elemento
+print(frutas[2])   # Tercer elemento
+
+# Indexación negativa
+print(frutas[-1])  # Último elemento
+print(frutas[-2])  # Penúltimo elemento</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+('manzana', 'plátano', 'cereza', 'naranja', 'limón')
+manzana
+cereza
+limón
+naranja
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="card">
+				<h3>Slicing (Rebanado)</h3>
+				<p>
+					Permite extraer una porción de la tupla utilizando la sintaxis <code>tupla[inicio:fin:paso]</code>. 
+					El índice de <code>fin</code> no se incluye.
+				</p>
+				<br>
+				<h3 class="sub">💻 Ejemplo:</h3>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">numeros = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+
+print(numeros[2:6])    # Desde el índice 2 hasta el 5
+print(numeros[:4])     # Desde el inicio hasta el índice 3
+print(numeros[5:])     # Desde el índice 5 hasta el final
+print(numeros[::2])    # De principio a fin, de 2 en 2
+print(numeros[::-1])   # Invierte la tupla</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+(2, 3, 4, 5)
+(0, 1, 2, 3)
+(5, 6, 7, 8, 9)
+(0, 2, 4, 6, 8)
+(9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="card">
+				<h3>Recorrido de tuplas</h3>
+				<p>
+					La forma más eficiente y limpia de recorrer una tupla es con un ciclo <code>for</code>. 
+					El bucle pasa por cada elemento de la tupla uno a uno, de principio a fin.
+				</p>
+				
+				<br>
+				<h3 class="sub">💻 Ejemplo: El método estándar: Ciclo <code>for</code> (Elemento por elemento)</h3>
+				<p>
+					Es la forma más limpia y directa. El bucle pasa por cada elemento de la tupla uno a uno, de principio a fin.
+				</p>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">frutas = ("manzana", "plátano", "cereza")
+
+for fruta in frutas:
+    print(f"Me gusta la {fruta}")</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+Me gusta la manzana
+Me gusta la plátano
+Me gusta la cereza
+</pre>
+					</div>
+				</div>
+				
+				<br>
+				<h3 class="sub">💻 Ejemplo: Ciclo <code>for</code> con <code>range()</code> y <code>len()</code> (Acceso por índice).</h3>
+				<p>
+					Si además del valor necesitas saber la <strong>posición (índice)</strong> exacta en la que se encuentra 
+					el elemento, puedes generar un rango numérico basado en el tamaño de la tupla.
+				</p>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">tecnologias = ("Python", "Java", "C", "C++")
+
+for i in range(len(tecnologias)):
+    print(f"Índice {i}: {tecnologias[i]}"))</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+10
+20
+30
+</pre>
+					</div>
+				</div>
+				
+				<br>
+				<h3 class="sub">
+					💻 Ejemplo: La forma elegante: Ciclo <code>for</code> con <code>enumerate()</code> (Valor e Índice).
+				</h3>
+				<p>
+					Esta es la opción recomendada cuando necesitas <strong>tanto el índice como el elemento</strong>. Es más 
+					limpia y "pythónica" que el método anterior, ya que <code>enumerate()</code> te devuelve ambos valores en 
+					cada iteración.
+				</p>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">colores = ("rojo", "verde", "azul")
+
+for indice, color in enumerate(colores):
+    print(f"El color en la posición {indice} es {color}")</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+El color en la posición 0 es rojo
+El color en la posición 1 es verde
+El color en la posición 2 es azul
+</pre>
+					</div>
+				</div>
+				
+				
+				<br>
+				<h3 class="sub">
+					💻 Ejemplo: Ciclo <code>while</code>.
+				</h3>
+				<p>
+					El bucle <code>while</code> recorre la tupla usando un índice manual. Útil cuando necesitas control total 
+					sobre la iteración o lógica de avance no lineal.
+				</p>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">numeros = (10, 20, 30, 40, 50)
+i = 0
+
+while i < len(numeros):
+    print(f"numeros[{i}] = {numeros[i]}")
+    i += 1</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+numeros[0] = 10
+numeros[1] = 20
+numeros[2] = 30
+numeros[3] = 40
+numeros[4] = 50
+</pre>
+					</div>
+				</div>
+				
+				
+				<br>
+				<h3 class="sub">
+					💻 Ejemplo: Desempaquetando (Tuplas anidadas)</code>.
+				</h3>
+				<p>
+					Si tienes una tupla que contiene otras tuplas dentro (como una matriz o una lista de coordenadas), 
+					puedes aprovechar el <strong>desempaquetado</strong> directamente en el bucle <code>for</code>.
+				</p>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python"># Tupla que contiene coordenadas (X, Y)
+coordenadas = ((1, 2), (5, 8), (9, 3))
+
+for x, y in coordenadas:
+    print(f"Punto X: {x}, Punto Y: {y}")</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+Punto X: 1, Punto Y: 2
+Punto X: 5, Punto Y: 8
+Punto X: 9, Punto Y: 3
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="card">
+				<h3>⚙️ Operadores</h3>
+				<p>
+					Los <strong>operadores</strong> son los bloques de construcción que nos permiten interactuar con las 
+					estructuras de datos en Python. Cuando trabajamos con tuplas, el comportamiento de estos operadores 
+					está completamente definido por la regla de oro de esta estructura: <strong>la inmutabilidad</strong>.
+					<br><br>
+					A diferencia de las listas, donde los operadores pueden modificar el contenedor directamente 
+					(como alterar sus elementos internos), en las tuplas los operadores actúan principalmente bajo 
+					tres enfoques:
+				</p>
+				<ol style="padding-left: 40px;">
+					<li>
+						<strong>Generación de nuevos datos:</strong> Operadores como la concatenación (+) o la replicación (*) 
+						no modifican la tupla original, sino que toman sus elementos para construir y regresar 
+						<strong>una tupla completamente nueva</strong> en memoria.
+					</li>
+					<li>
+						<strong>Consultas y extracción:</strong> Los operadores de acceso (<code>[]</code> y <code>[:]</code>) 
+						nos permiten extraer elementos individuales o subconjuntos sin alterar la estructura fuente.
+					</li>
+					<li>
+						<strong>Evaluación lógica y comparación:</strong> Operadores de pertenencia (<code>in</code>) o de 
+						comparación (<code>==</code>, <code><</code>, <code>></code>) analizan el contenido o la identidad de 
+						las tuplas para regresar un valor booleano (<code>True</code> o <code>False</code>), siendo ideales 
+						para la toma de decisiones en bucles y condicionales.
+					</li>
+				</ol>
+				
+				
+				<table class="comparison-table table-compact">
+					<thead>
+						<tr>
+							<th>Operador</th>
+							<th>Descripción</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+						  <td><code>+</code></td>
+						  <td style="text-align: justify;"><strong>Concatenación:</strong> Une dos o más tuplas. Se obtiene y regresa una <strong>nueva tupla</strong> que contiene la 
+						      <br>combinación de todos los elementos originales en el mismo orden.</td>
+						</tr>
+						<tr>
+						  <td><code>*</code></td>
+						  <td><strong>Replicación:</strong> Repite los elementos de la tupla. Se obtiene y regresa una <strong>nueva tupla</strong> con los elementos duplicados el número de veces indicado por el multiplicador entero.</td>
+						</tr>
+						<tr>
+						  <td><code>==</code></td>
+						  <td><strong>Igualdad:</strong> Compara si dos tuplas son idénticas en contenido. Regresa un valor booleano (<code>True</code> si tienen los mismos elementos en el mismo orden exacto, de lo contrario regresa <code>False</code>).</td>
+						</tr>
+						<tr>
+						  <td><code>!=</code></td>
+						  <td><strong>Desigualdad:</strong> Compara si dos tuplas difieren en algo. Regresa un valor booleano (<code>True</code> si hay diferencias en los elementos o en su orden, de lo contrario regresa <code>False</code>).</td>
+						</tr>
+						<tr>
+						  <td><code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code></td>
+						  <td><strong>Comparación:</strong> Evalúan las tuplas elemento por elemento en orden lexicográfico. Regresan un valor booleano (<code>True</code> o <code>False</code>) basado en el resultado del primer par de elementos diferentes detectado.</td>
+						</tr>
+						<tr>
+						  <td><code>in</code></td>
+						  <td><strong>Pertenencia:</strong> Busca la existencia de un objeto. Regresa <code>True</code> si el elemento especificado se encuentra dentro de la tupla; de lo contrario, regresa <code>False</code>.</td>
+						</tr>
+						<tr>
+						  <td><code>not in</code></td>
+						  <td><strong>No pertenencia:</strong> Verifica la ausencia de un objeto. Regresa <code>True</code> si el elemento especificado no existe dentro de la tupla; si existe, regresa <code>False</code>.</td>
+						</tr>
+						<tr>
+						  <td><code>[]</code></td>
+						  <td><strong>Indexación:</strong> Accede a una posición específica. Se obtiene y regresa <strong>el objeto individual</strong> que se encuentra almacenado en el índice numérico indicado.</td>
+						</tr>
+						<tr>
+						  <td><code>[:]</code></td>
+						  <td><strong>Slicing (Rebanado):</strong> Extrae un rango de posiciones. Se obtiene y regresa una <strong>nueva tupla</strong> que contiene exclusivamente el subconjunto de elementos seleccionados.</td>
+						</tr>
+						<tr>
+						  <td><code>is</code></td>
+						  <td><strong>Identidad:</strong> Evalúa la referencia de memoria. Regresa <code>True</code> si ambas variables apuntan exactamente al mismo objeto físico en memoria; de lo contrario, regresa <code>False</code>.</td>
+						</tr>
+						<tr>
+						  <td><code>is not</code></td>
+						  <td><strong>Identidad negativa:</strong> Evalúa la referencia de memoria. Regresa <code>True</code> si las variables apuntan a objetos distintos en memoria, sin importar si sus contenidos son iguales; de lo contrario, regresa <code>False</code>.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>	
+				
+				
+			<div class="card">
+				<h3 class="sub">💻 Ejemplo: Concatenación (+)</h3>
+				<p>
+					El operador + une dos tuplas y crea una nueva tupla que contiene los elementos de ambas.
+				</p>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">a = (1, 2, 3)
+b = (4, 5)
+resultado = a + b
+print(resultado)</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+(1, 2, 3, 4, 5)
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="card">
+				<h3 class="sub">💻 Ejemplo: Repetición (*)</h3>
+				<p>
+					El operador * toma una tupla y la repite un número determinado de veces, generando una nueva tupla más larga con el contenido original repetido consecutivamente.
+				</p>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">a = (1, 2)
+resultado = a * 3
+print(resultado)</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+(1, 2, 1, 2, 1, 2)
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="card">
+				<h3 class="sub">💻 Ejemplo: Pertenencia (in y not in)</h3>
+				<p>
+					Los operadores in y not in sirven para comprobar si un elemento pertenece (o no) a una tupla.
+				</p>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">frutas = ("manzana", "pera", "uva")
+
+if "pera" in frutas:
+    print("Sí tenemos pera")
+
+if "mango" not in frutas:
+    print("No tenemos mango")</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+Sí tenemos pera
+No tenemos mango
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="card">
+				<h3>Métodos y Funciones</h3>
+				<p>
+					A pesar de que las tuplas son estructuras de datos muy sencillas y están limitadas por su naturaleza 
+					<strong>inmutable</strong>, Python nos proporciona un conjunto de <strong>métodos integrados</strong> 
+					y <strong>funciones integradas</strong> para interactuar con ellas de forma eficiente.
+				</p>
+				
+				<ul style="padding-left: 40px;">
+					<li style="text-align: justify;">
+						<strong>Los Métodos (<code>tupla.metodo()</code>):</strong> Son funciones que pertenecen 
+						exclusivamente al objeto tipo tupla. Se invocan utilizando la "nomenclatura de punto" después 
+						del nombre de tu variable.
+					</li>
+					<li style="text-align: justify;">
+						<strong>Las Funciones Integradas (<code>funcion(tupla)</code>):</strong> Son herramientas nativas 
+						globales de Python que aceptan una tupla como argumento entre sus paréntesis. Estas funciones son 
+						muy potentes porque permiten analizar el contenido de la tupla, transformarla en otros tipos de 
+						datos o calcular estadísticas rápidas en milisegundos.
+					</li>
+				</ul>
+				
+				<p>
+					Al no tener que preocuparse por gestionar cambios de tamaño o reordenamientos de memoria (como ocurre 
+					con las listas), tanto los métodos como las funciones integradas se ejecutan de forma sumamente rápida, 
+					convirtiendo a las tuplas en la opción ideal para optimizar la lectura y el análisis de datos fijos.
+				</p>
+			</div>
+			
+			
+			<div class="card">
+				<h3>Métodos</h3>
+				<p>
+					Debido a que las tuplas no se pueden modificar, su catálogo de métodos es extremadamente reducido 
+					(solo existen dos). Su único objetivo es realizar búsquedas y conteos internos sin alterar los datos.
+				</p>
+				<table class="comparison-table table-compact table-methods">
+					<thead>
+						<tr>
+							<th>Método</th>
+							<th>Descripción</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+						  <td><code>.count(valor)</code></td>
+						  <td><strong>Conteo de elementos:</strong> Busca un elemento específico dentro de la tupla y regresa un número entero (<code>int</code>) que representa la cantidad total de veces que aparece. Si el elemento no existe, regresa <code>0</code>.</td>
+						</tr>
+						<tr>
+						  <td><code>.index(valor)</code></td>
+						  <td><strong>Búsqueda de posición:</strong> Busca un elemento específico en la tupla y regresa un número entero (<code>int</code>) con el índice de su <strong>primera</strong> aparición. Si el elemento no se encuentra en la tupla, no regresa nada y lanza un error de tipo <code>ValueError</code>.</td>
+						</tr>
+					</tbody>
+					</table>
+			</div>
+			
+			
+			<div class="card">
+				<h3>Funciones Integradas</h3>
+				<p>
+					A diferencia de los métodos (que se invocan desde la tupla), las <strong>funciones integradas</strong> son 
+					herramientas globales de Python a las cuales les pasas la tupla como un argumento o parámetro para 
+					analizarla o transformarla.
+				</p>
+				<table class="comparison-table table-compact">
+					<thead>
+						<tr>
+							<th>Función</th>
+							<th>Descripción</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+						  <td><code>len(tupla)</code></td>
+						  <td><strong>Longitud:</strong> Cuenta el número total de elementos que contiene la tupla y regresa un número entero (<code>int</code>).</td>
+						</tr>
+						<tr>
+						  <td><code>max(tupla)</code></td>
+						  <td><strong>Valor máximo:</strong> Analiza los elementos de la tupla y regresa el elemento con el valor más alto. Todos los elementos deben ser del mismo tipo comparable.</td>
+						</tr>
+						<tr>
+						  <td><code>min(tupla)</code></td>
+						  <td><strong>Valor mínimo:</strong> Analiza los elementos de la tupla y regresa el elemento con el valor más bajo. Aplica la misma regla de compatibilidad de tipos que <code>max()</code>.</td>
+						</tr>
+						<tr>
+						  <td><code>sum(tupla)</code></td>
+						  <td><strong>Suma total:</strong> Suma todos los elementos de la tupla y regresa el resultado numérico (<code>int</code> o <code>float</code>). Todos los elementos deben ser estrictamente numéricos.</td>
+						</tr>
+						<tr>
+						  <td><code>sorted(tupla)</code></td>
+						  <td><strong>Ordenamiento:</strong> Toma los elementos de la tupla, los ordena de menor a mayor y regresa una <strong>nueva lista</strong> (<code>list</code>) con el resultado. La tupla original permanece intacta.</td>
+						</tr>
+						<tr>
+						  <td><code>tuple(iterable)</code></td>
+						  <td><strong>Constructor:</strong> Convierte otro objeto iterable (como una lista, un conjunto o una cadena de texto) y regresa una <strong>nueva tupla</strong> con esos elementos.</td>
+						</tr>
+						<tr>
+						  <td><code>any(tupla)</code></td>
+						  <td><strong>Evaluación lógica OR:</strong> Regresa <code>True</code> si al menos uno de los elementos de la tupla es verdadero (evalúa como <code>True</code>). Si la tupla está vacía o todos son falsos, regresa <code>False</code>.</td>
+						</tr>
+						<tr>
+						  <td><code>all(tupla)</code></td>
+						  <td><strong>Evaluación lógica AND:</strong> Regresa <code>True</code> si absolutamente todos los elementos de la tupla son verdaderos (evalúan como <code>True</code>). Si la tupla está vacía, también regresa <code>True</code>.</td>
+						</tr>
+						<tr>
+						  <td><code>enumerate(tupla)</code></td>
+						  <td><strong>Indexación en bucle:</strong> Regresa un objeto iterable que produce pares de datos en formato <code>(índice, elemento)</code> para cada elemento de la tupla. Muy utilizado en bucles <code>for</code>.</td>
+						</tr>
+						<tr>
+						  <td><code>zip(tupla, ...)</code></td>
+						  <td><strong>Emparejamiento:</strong> Toma dos o más colecciones y regresa un objeto iterable que combina los elementos de cada una en sus posiciones correspondientes, generando tuplas ordenadas.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+						
+			<div class="nav-buttons"><button class="nav-arrow-btn" onclick="goToSection(1)">← Anterior</button><button class="nav-arrow-btn" onclick="goToSection(3)">Siguiente: Conjuntos →</button></div>
+		</div>
+		
+		<!-- ======================================================== -->
+		<!-- ===================== CONJUNTOS ===================== -->
+		<!-- ======================================================== -->
+		<div class="section" id="section-3">
+			<div class="section-header">
+				<div class="section-icon icon-yellow">🧮</div>
+				<div class="section-header-text">
+					<h2>Conjuntos (Sets)</h2>
+					<p>Colecciones no ordenadas de elementos únicos</p>
+				</div>
+			</div>
+			
+			<div class="card">
+				<p>
+					Un conjunto es una <strong>colección desordenada, mutable, no indexada</strong> de elementos 
+					<strong>únicos</strong>.
+				</p>
+				<ul style="padding-left: 40px;">
+					<li>
+						<strong>Desordenada:</strong> Los elementos no tienen un orden específico. No puedes confiar en 
+						que el primer elemento que agregaste se quede en la primera posición.
+					</li>
+					<li>
+						<strong>Mutable:</strong> Los conjuntos se pueden modificar después de haber sido creados.
+					</li>
+					<li>
+						<strong>No indexada:</strong> Debido a que no tienen orden, <strong>no puedes</strong> acceder a 
+						sus elementos usando un índice (como <code>mi_conjunto[0]</code>).
+					</li>
+					<li>
+						<strong>Sin duplicados:</strong> Un conjunto no puede tener dos elementos iguales. Si intentas 
+						añadir un elemento que ya existe, Python simplemente lo ignorará.
+					</li>
+					<li>
+						<strong>Heterogéneo:</strong> Un conjunto puede almacenar diferentes tipos de datos al mismo 
+						tiempo dentro del mismo conjunto.
+					</li>
+					<li>
+						<strong>Sus elementos deben ser inmutables (<em>hashables</em>):</strong> Esta es la regla de oro. 
+						No puedes meter elementos que puedan cambiar de valor. Python necesita que sean fijos para poder 
+						calcular su "huella digital" (hash) y garantizar de forma ultra rápida que no haya duplicados.
+					</li>
+				</ul>
+			</div>
+			
+			
+			<div class="card">
+				<h3>¿Por qué usar conjuntos?</h3>
+				<p>
+					Principalmente por <strong>rendimiento y lógica</strong>. Buscar un elemento en un conjunto es 
+					increíblemente rápido (tiene una complejidad temporal de <em>O(1)</em> gracias a una técnica 
+					llamada <em>hashing</em>), mientras que en una lista puede ser más lento (<em>O(n)</em>) porque 
+					Python tiene que revisar elemento por elemento. Además, son perfectos para eliminar duplicados de 
+					forma instantánea.
+				</p>
+				<h3>¿Cuándo usar un conjunto?</h3>
+				<ul style="padding-left: 40px;">
+					<li>
+						Cuando quieras eliminar duplicados de una lista.
+					</li>
+					<li>
+						Cuando necesites verificar rápidamente si un elemento pertenece a un grupo (la búsqueda en conjuntos
+						es extremadamente rápida, mucho más que en listas).
+					</li>
+					<li>
+						Cuando necesites realizar operaciones matemáticas de conjuntos.
+					</li>
+				</ul>
+			</div>
+			
+			<div class="card">
+				<h3>🔤 Sintaxis y Creación</h3>
+				<p>
+					Los conjuntos se definen utilizando llaves <code>{}</code> y entre ellas sus elementos separados por comas.
+				</p>
+<pre>
+<code class="language-python">nombre_conjunto = [elemento1, elemento2, ..., elemento_n]</code>
+</pre>
+				<p>
+					También se puede usar el constructor <code>set()</code>.
+				</p>
+				<h3 class="sub">💻 Ejemplos:</h3>
+<pre>
+<code class="language-python"># Con llaves
+frutas = {"manzana", "pera", "naranja"}
+
+# Con el constructor set()
+numeros = set([1, 2, 3, 2, 1])  # → {1, 2, 3}
+
+# Conjunto vacío (¡NUNCA usar {}!)
+vacio = set()
+
+# Desde una cadena
+letras = set("python")  # → {'p','y','t','h','o','n'}
+
+# Los duplicados se eliminan automáticamente
+numeros = {1, 2, 2, 3, 3, 3, 4}
+print(numeros)  # Resultado: {1, 2, 3, 4}</code>
+</pre>
+			</div>
+			
+			
+			<div class="warning-box">
+				<div class="warning-title">⚠️ ¡Error común!</div>
+				<p>
+					Usar <code>{}</code> crea un <strong>diccionario vacío</strong>, no un conjunto vacío. Siempre usa 
+					<code>set()</code> para crear un conjunto vacío.
+				</p>
+<pre>
+<code class="language-python">estructura_falsa = {}       # Esto es un DICCIONARIO (dict)
+conjunto_verdadero = set()  # Esto SÍ es un conjunto vacío</code>
+</pre>
+			</div>
+			
+			<div class="card">
+				<h3>Conversión de tipos (Casting)</h3>
+				<p>
+					Puedes transformar otras colecciones (como listas o tuplas) en conjuntos. Esto es el "truco definitivo" 
+					para borrar duplicados de una lista:
+				</p>
+				<br>
+				<h3 class="sub">💻 Ejemplo:</h3>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">lista_con_duplicados = [1, 1, 2, 3, 4, 4, 4, 5]
+
+conjunto_limpio = set(lista_con_duplicados)
+print(conjunto_limpio)  # Resultado: {1, 2, 3, 4, 5}</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+{1, 2, 3, 4, 5}
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="card">
+				<h3>Recorrido de conjunto</h3>
+				<p>
+					La forma más eficiente y limpia de recorrer una tupla es con un ciclo <code>for</code>. 
+					El bucle pasa por cada elemento de la tupla uno a uno, de principio a fin.
+				</p>
+				
+				<br>
+				<h3 class="sub">💻 Ejemplo: La forma estándar: Ciclo <code>for ... in</code></h3>
+				<p>
+					Es la manera directa y limpia. Python va tomando un elemento a la vez hasta que se acaban.
+				</p>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">ingredientes = {"tomate", "queso", "albahaca", "orégano"}
+
+for ingrediente in ingredientes:
+    print(f"Agregando: {ingrediente}")</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+Agregando: albahaca
+Agregando: tomate
+Agregando: queso
+Agregando: orégano
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="warning-box">
+				<div class="warning-title">⚠️ Recuerda:</div>
+				<p>
+					Cada vez que ejecutes este código, el orden en el que se imprimen los ingredientes puede ser 
+					completamente diferente, ya que los conjuntos no tienen orden interno.
+				</p>
+			</div>
+			
+			
+			<div class="card">
+				<h3 class="sub">💻 Ejemplo: <code>enumerate()</code> (Recorrer con el índice simulado).</h3>
+				<p>
+					Si por alguna razón necesitas mostrar un número de contador mientras recorres el conjunto, 
+					puedes usar la función enumerate().
+				</p>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">paises = {"México", "Argentina", "Colombia", "España"}
+
+for indice, pais in enumerate(paises, start=1):
+    print(f"País {indice}: {pais}")</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+País 1: México
+País 2: Argentina
+País 3: Colombia
+País 4: España
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="note-box">
+				<div class="note-title">📝 Nota:</div>
+				<p>
+					<em>
+						Esto no significa que estés accediendo al índice real del conjunto, solo estás vistiendo la 
+						salida con un número secuencial.
+					</em>
+				</p>
+			</div>
+			
+			
+			<div class="warning-box">
+				<div class="warning-title">⚠️ 🚨 Importante:</div>
+				<p>
+					<strong>Nunca intentes añadir (<code>.add()</code>) o eliminar (<code>.remove()</code>) elementos 
+					de un conjunto mientras lo estás recorriendo con un bucle for</strong>. Si lo haces, Python se 
+					confundirá con el tamaño cambiante de la estructura y lanzará un error de tipo <code>RuntimeError: 
+					Set size changed during iteration</code>.
+				</p>
+			</div>
+			
+			
+			<div class="card">
+				<h3>Operadores</h3>
+				<p>
+					En Python, los <strong>operadores de conjuntos</strong> son símbolos reservados que te permiten realizar 
+					operaciones de la lógica matemática (álgebra de Boole y teoría de conjuntos) directamente sobre tus datos, 
+					de una forma mucho más visual, compacta y matemática que utilizando métodos con texto.
+					<br><br>
+					Mientras que en las listas utilizas operadores principalmente para concatenar (<code>+</code>) o 
+					repetir (<code>*</code>), en los conjuntos los operadores cambian de juego por completo para modelar 
+					relaciones lógicas.
+				</p>
+				<h3 class="sub">Las 3 Ventajas de usar Operadores vs. Métodos</h3>
+				<ol style="padding-left: 40px;">
+					<li>
+						<strong>Legibilidad Matemática:</strong> Escribir A | B se asemeja mucho más a la notación matemática real que escribir A.union(B). Para algoritmos complejos o expresiones con múltiples conjuntos (por ejemplo, (A & B) - C), el uso de operadores hace que el código sea significativamente más corto y limpio.
+					</li>
+					<li>
+						<strong>Operaciones "In-Place" (en el sitio):</strong> Los operadores compuestos como |= o -= te permiten modificar el conjunto original directamente sin necesidad de reasignar la variable, optimizando el uso de memoria en colecciones grandes.
+					</li>
+					<li>
+						<strong>Restricción de Tipo Estricta:</strong> Existe una diferencia crucial entre ambos enfoques. Los métodos (como .union()) son flexibles y aceptan que les pases cualquier colección (una lista, una tupla o un diccionario) porque Python la convierte a conjunto automáticamente antes de operar. En cambio, los operadores te obligan a que ambos lados de la expresión sean estrictamente conjuntos (set). Si intentas hacer conjunto | lista, Python lanzará un TypeError. Esto, aunque parece una limitación, es excelente para evitar errores accidentales en la lógica de tu código.
+					</li>
+				</ol>
+
+<pre>
+<code class="language-python"># Con métodos:
+resultado = conjunto_a.intersection(conjunto_b).difference(conjunto_c)
+
+# Con operadores (mucho más intuitivo):
+resultado = (conjunto_a & conjunto_b) - conjunto_c</code>
+</pre>
+				
+				<table class="comparison-table table-compact">
+					<thead>
+						<tr>
+							<th>Operador</th>
+							<th>Descripción</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><code>|</code></td>
+							<td><strong>Unión:</strong> Devuelve un nuevo conjunto con todos los elementos de ambos conjuntos.</td>
+						</tr>
+						<tr>
+							<td><code>&amp;</code></td>
+							<td><strong>Intersección:</strong> Devuelve un nuevo conjunto con los elementos que están en ambos conjuntos.</td>
+						</tr>
+						<tr>
+							<td><code>-</code></td>
+							<td><strong>Diferencia:</strong> Devuelve los elementos del primer conjunto que no están en el segundo.</td>
+						</tr>
+						<tr>
+							<td><code>^</code></td>
+							<td><strong>Diferencia simétrica:</strong> Devuelve los elementos que están en uno o en otro, pero no en ambos.</td>
+						</tr>
+						<tr>
+							<td><code>==</code></td>
+							<td><strong>Igualdad:</strong> Devuelve <code>True</code> si ambos conjuntos contienen exactamente los mismos elementos.</td>
+						</tr>
+						<tr>
+							<td><code>!=</code></td>
+							<td><strong>Desigualdad:</strong> Devuelve <code>True</code> si los conjuntos tienen elementos diferentes.</td>
+						</tr>
+						<tr>
+							<td><code>&lt;</code></td>
+							<td><strong>Subconjunto propio:</strong> Devuelve <code>True</code> si el primer conjunto es subconjunto del segundo y no son iguales.</td>
+						</tr>
+						<tr>
+							<td><code>&lt;=</code></td>
+							<td><strong>Subconjunto:</strong> Devuelve <code>True</code> si todos los elementos del primer conjunto están en el segundo.</td>
+						</tr>
+						<tr>
+							<td><code>&gt;</code></td>
+							<td><strong>Superconjunto propio:</strong> Devuelve <code>True</code> si el primer conjunto contiene al segundo y tiene más elementos.</td>
+						</tr>
+						<tr>
+							<td><code>&gt;=</code></td>
+							<td><strong>Superconjunto:</strong> Devuelve <code>True</code> si el primer conjunto contiene todos los elementos del segundo.</td>
+						</tr>
+						<tr>
+							<td><code>in</code></td>
+							<td><strong>Pertenencia:</strong> Devuelve <code>True</code> si un elemento se encuentra dentro del conjunto.</td>
+						</tr>
+						<tr>
+							<td><code>not in</code></td>
+							<td><strong>No pertenencia:</strong> Devuelve <code>True</code> si un elemento no se encuentra en el conjunto.</td>
+						</tr>
+						<tr>
+							<td><code>|=</code></td>
+							<td><strong>Unión in-place:</strong> Modifica el conjunto original agregando los elementos del otro (equivalente a <code>.update()</code>).</td>
+						</tr>
+						<tr>
+							<td><code>&amp;=</code></td>
+							<td><strong>Intersección in-place:</strong> Modifica el conjunto original conservando solo los elementos comunes (equivalente a <code>.intersection_update()</code>).</td>
+						</tr>
+						<tr>
+							<td><code>-=</code></td>
+							<td><strong>Diferencia in-place:</strong> Modifica el conjunto original eliminando los elementos presentes en el otro (equivalente a <code>.difference_update()</code>).</td>
+						</tr>
+						<tr>
+							<td><code>^=</code></td>
+							<td><strong>Diferencia simétrica in-place:</strong> Modifica el conjunto original dejando solo los elementos no comunes (equivalente a <code>.symmetric_difference_update()</code>).</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+				
+			
+			<div class="tip-box">
+				<div class="tip-title">💡 Diferencia clave con los métodos:</div>
+				<p>
+					A diferencia de los métodos como <code>.union()</code> o <code>.intersection()</code> 
+					(que aceptan cualquier tipo de colección como listas o tuplas y las convierten sobre la marcha), 
+					los operadores obligan a que <strong>ambos lados de la expresión sean estrictamente conjuntos</strong> 
+					<code>(set)</code>.
+				</p>
+			</div>					
+			
+			
+			<div class="card">
+				<h3>Métodos</h3>
+				<p>
+					Los <strong>métodos de conjuntos</strong> en Python ofrecen el control total y la máxima flexibilidad al manipular estas colecciones.
+				</p>
+				<table class="comparison-table table-compact table-methods">
+					<thead>
+						<tr>
+							<th>Método</th>
+							<th>Descripción</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><code>.add()</code></td>
+							<td>Agrega un elemento al conjunto. Si el elemento ya existe, no hace nada.</td>
+						</tr>
+						<tr>
+							<td><code>.clear()</code></td>
+							<td>Elimina todos los elementos del conjunto, dejándolo completamente vacío.</td>
+						</tr>
+						<tr>
+							<td><code>.copy()</code></td>
+							<td>Devuelve una copia superficial (<em>shallow copy</em>) del conjunto.</td>
+						</tr>
+						<tr>
+							<td><code>.difference()</code></td>
+							<td>Devuelve un nuevo conjunto con los elementos del primero que no están en el segundo.</td>
+						</tr>
+						<tr>
+							<td><code>.difference_update()</code></td>
+							<td>Modifica el conjunto original eliminando todos los elementos que también están en el otro.</td>
+						</tr>
+						<tr>
+							<td><code>.discard()</code></td>
+							<td>Elimina el elemento especificado si está presente. Si no existe, no lanza ningún error.</td>
+						</tr>
+						<tr>
+							<td><code>.intersection()</code></td>
+							<td>Devuelve un nuevo conjunto con los elementos que son comunes a ambos conjuntos.</td>
+						</tr>
+						<tr>
+							<td><code>.intersection_update()</code></td>
+							<td>Modifica el conjunto original, conservando únicamente los elementos comunes.</td>
+						</tr>
+						<tr>
+							<td><code>.isdisjoint()</code></td>
+							<td>Devuelve <code>True</code> si los dos conjuntos no tienen absolutamente ningún elemento en común.</td>
+						</tr>
+						<tr>
+							<td><code>.issubset()</code></td>
+							<td>Devuelve <code>True</code> si todos los elementos del conjunto están presentes en el otro conjunto.</td>
+						</tr>
+						<tr>
+							<td><code>.issuperset()</code></td>
+							<td>Devuelve <code>True</code> si el conjunto contiene a todos los elementos del otro conjunto.</td>
+						</tr>
+						<tr>
+							<td><code>.pop()</code></td>
+							<td>Elimina y devuelve un elemento aleatorio del conjunto (lanza <code>KeyError</code> si está vacío).</td>
+						</tr>
+						<tr>
+							<td><code>.remove()</code></td>
+							<td>Elimina el elemento especificado. Lanza un error (<code>KeyError</code>) si el elemento no existe.</td>
+						</tr>
+						<tr>
+							<td><code>.symmetric_difference()</code></td>
+							<td>Devuelve un nuevo conjunto con los elementos que están en uno de los conjuntos, pero no en ambos.</td>
+						</tr>
+						<tr>
+							<td><code>.symmetric_difference_update()</code></td>
+							<td>Modifica el conjunto original, dejando solo los elementos que no son comunes.</td>
+						</tr>
+						<tr>
+							<td><code>.union()</code></td>
+							<td>Devuelve un nuevo conjunto que contiene todos los elementos de ambos conjuntos (sin duplicados).</td>
+						</tr>
+						<tr>
+							<td><code>.update()</code></td>
+							<td>Modifica el conjunto original agregando todos los elementos presentes en el otro conjunto o colección.</td>
+						</tr>
+					</tbody>
+					</table>
+			</div>
+			
+			<div class="card">
+				<h3>Funciones Integradas</h3>
+				<p>
+					Las funciones integradas de Python (<em>built-in functions</em>) te permiten analizar, transformar y extraer información de los conjuntos desde una perspectiva global del lenguaje.
+				</p>
+				<table class="comparison-table table-compact">
+					<thead>
+						<tr>
+							<th>Función</th>
+							<th>Descripción</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><code>all()</code></td>
+							<td>Devuelve <code>True</code> si todos los elementos del conjunto son verdaderos (o si el conjunto está vacío).</td>
+						</tr>
+						<tr>
+							<td><code>any()</code></td>
+							<td>Devuelve <code>True</code> si al menos un elemento del conjunto es verdadero. Si está vacío, devuelve <code>False</code>.</td>
+						</tr>
+						<tr>
+							<td><code>enumerate()</code></td>
+							<td>Devuelve un objeto enumerador que genera pares de (índice simulado, elemento) al iterar el conjunto.</td>
+						</tr>
+						<tr>
+							<td><code>frozenset()</code></td>
+							<td>Convierte un conjunto (o cualquier iterable) en una versión inmutable del mismo.</td>
+						</tr>
+						<tr>
+							<td><code>len()</code></td>
+							<td>Devuelve el número total de elementos (la longitud o cardinalidad) del conjunto.</td>
+						</tr>
+						<tr>
+							<td><code>max()</code></td>
+							<td>Devuelve el elemento con el valor máximo dentro del conjunto.</td>
+						</tr>
+						<tr>
+							<td><code>min()</code></td>
+							<td>Devuelve el elemento con el valor mínimo dentro del conjunto.</td>
+						</tr>
+						<tr>
+							<td><code>set()</code></td>
+							<td>Crea un conjunto vacío o convierte otro tipo de colección iterable en un conjunto.</td>
+						</tr>
+						<tr>
+							<td><code>sorted()</code></td>
+							<td>Toma los elementos del conjunto y devuelve una nueva <strong>lista</strong> con esos elementos ordenados ascendentemente.</td>
+						</tr>
+						<tr>
+							<td><code>sum()</code></td>
+							<td>Suma todos los elementos del conjunto (requiere que todos los elementos sean numéricos).</td>
+						</tr>
+						<tr>
+							<td><code>type()</code></td>
+							<td>Devuelve el tipo de dato del objeto (en este caso, <code>&lt;class 'set'&gt;</code>).</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			
+			<div class="warning-box">
+				<div class="warning-title">⚠️ Restricción Importante: Elementos Mutables:</div>
+				<p>
+					Para que Python pueda asegurar que los elementos sean únicos y buscarlos a máxima velocidad, necesita que los elementos del conjunto sean inmutables 
+					(o más técnicamente, <em>hashables</em>).
+				</p>
+				<ul>
+					<li>
+						<strong>Puedes meter en un conjunto:</strong> Números, strings, booleanos y tuplas.
+					</li>
+					<li>
+						<strong>NO puedes meter en un conjunto:</strong> Listas, diccionarios u otros conjuntos.
+					</li>
+				</ul>
+<pre>
+<code class="language-python"># Esto dará un TypeError: unhashable type: 'list'
+mi_conjunto = {1, 2, [3, 4]}</code>
+</pre>
+			</div>
+			
+			
+			<div class="note-box">
+				<div class="note-title">📝 Nota:</div>
+				<p>
+					Si necesitas meter un conjunto dentro de otro conjunto, Python te ofrece una variante inmutable llamada <code>frozenset</code>.
+				</p>
+			</div>
+			
+			
+			<div class="card">
+				<h3>🔮 Comprensión de Conjuntos (Set Comprehension)</h3>
+				<p>
+					La comprensión de conjuntos (en inglés, Set Comprehension) es una de las características más potentes, elegantes y "pythonicas" que vas a encontrar en el lenguaje.
+
+					Es una sintaxis compacta que te permite <strong>crear un nuevo conjunto a partir de otro iterable</strong> (como una lista, una tupla, un rango o incluso otro conjunto) 
+					en una sola línea de código, realizando transformaciones o filtrados sobre la marcha.
+
+					Si ya conoces la comprensión de listas (List Comprehension), te alegrará saber que la de conjuntos funciona exactamente igual, con la única diferencia de que utiliza 
+					llaves <code>{}</code> en lugar de corchetes <code>[]</code> y, por supuesto, elimina automáticamente cualquier duplicado en el resultado.
+				</p>
+			</div>
+			
+			
+			<div class="card">
+				<h3>Sintaxis</h3>
+				<p>
+					La estructura interna de una comprensión de conjuntos se lee casi como una frase en inglés o una fórmula matemática:
+				</p>
+<pre>
+<code class="language-python">nuevo_conjunto = {expresion for elemento in iterable}</code>
+</pre>
+				<p>Donde:</p>
+				<ul>
+					<li>
+						<code>expresion</code>: Lo que quieres hacer con cada elemento (la transformación). Si no quieres transformar nada, simplemente pones el <code>elemento</code>.
+					</li>
+					<li>
+						<code>for elemento in iterable</code>: El bucle tradicional que recorre la colección de origen.
+					</li>
+				</ul>
+			</div>
+			
+			
+			<div class="card">
+				<h3 class="sub">💻 Ejemplo: Sin comprensión</h3>
+				<p>
+					Imagina que tienes una lista de números y quieres obtener un conjunto con esos mismos números pero elevados al cuadrado.
+					<br>
+					El enfoque tradicional (con ciclo for manual):
+				</p>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">numeros = [1, 2, 3, 4]
+cuadrados = set()
+
+for n in numeros:
+    cuadrados.add(n ** 2)
+
+print(cuadrados)</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+{16, 1, 4, 9}
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="card">
+				<h3 class="sub">💻 Ejemplo: Con comprensión</h3>
+				<p>
+					El enfoque elegante (con Comprensión de Conjuntos):
+				</p>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">numeros = [1, 2, 3, 4]
+
+cuadrados = {n ** 2 for n in numeros}
+
+print(cuadrados)</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+{16, 1, 4, 9}
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="card">
+				<h3>Añadiendo Filtros: El uso del <code>if</code></h3>
+				<p>
+					Puedes hacer la jugada más interesante añadiendo un condicional <code>if</code> al final. Esto sirve 
+					para <strong>filtrar</strong> qué elementos de la colección original merecen pasar al nuevo conjunto.
+				</p>
+<pre>
+<code class="language-python">nuevo_conjunto = {expresion for elemento in iterable if condicion}</code>
+</pre>
+			</div>
+			
+			
+			<div class="card">
+				<h3 class="sub">💻 Ejemplo: comprensión con filtro</h3>
+				<p>
+					Supongamos que tienes una lista de nombres de usuarios, algunos repetidos y en minúsculas. Quieres un 
+					conjunto que contenga <strong>solo los nombres que tengan más de 4 letras</strong>, y además los quieres 
+					limpios con la <strong>primera letra en mayúscula</strong>.
+				</p>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">usuarios = ["ana", "luis", "pedro", "ana", "sofía", "juan", "sofía"]
+
+# Filtramos (if len(u) > 4) y transformamos (u.capitalize()) al mismo tiempo
+usuarios_filtrados = {u.capitalize() for u in usuarios if len(u) > 4}
+
+print(usuarios_filtrados)
+# Resultado: {'Pedro', 'Sofía'} 
+# (Nota cómo 'Ana', 'Luis' y 'Juan' quedaron fuera, y los duplicados se borraron solos)</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+{'Pedro', 'Sofía'}
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			<div class="card">
+				<h3>💻 Ejemplo: El "Efecto Conjunto": Eliminación Automática de Duplicados</h3>
+				<p>
+					La magia de usar comprensión de conjuntos frente a la de listas es que el propio comportamiento de la estructura trabaja a tu favor.
+					<br>
+					Mira este ejemplo: queremos extraer las iniciales de una frase.
+				</p>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">frase = "Tres tristes tigres tragan trigo"
+
+# Comprensión de conjunto para obtener las iniciales en minúscula
+iniciales = {palabra[0].lower() for palabra in frase.split()}
+
+print(iniciales)
+# Resultado: {'t'}</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+{'t'}
+</pre>
+					</div>
+				</div>
+				<p>
+					Como todas las palabras empiezan con "T", una comprensión de lista te habría devuelto <code>['t', 't', 't', 't', 't']</code>. La 
+					comprensión de conjuntos entiende que los duplicados no aportan nada y te devuelve únicamente <code>{'t'}</code>.
+				</p>
+			</div>
+			
+			
+			<div class="tip-box">
+				<div class="tip-title">💡Usa la comprensión de conjuntos:</div>
+				<p>
+					Cuando la lógica de creación del conjunto sea simple (una transformación directa o un filtro sencillo). Hará tu código más limpio, 
+					rápido y fácil de leer para otros desarrolladores de Python.
+				</p>
+			</div>
+			
+			
+			<div class="tip-box">
+				<div class="tip-title">💡No uses la comprensión de conjuntos:</div>
+				<p>
+					Cuando la lógica sea demasiado compleja, requiera múltiples condiciones muy largas o bucles anidados difíciles de seguir. Si la 
+					línea de código mide tres kilómetros, es mejor usar un bucle <code>for</code> tradicional por el bien de la legibilidad de tu código.
+				</p>
+			</div>
+			
+				
+			<div class="nav-buttons"><button class="nav-arrow-btn" onclick="goToSection(2)">← Anterior</button><button class="nav-arrow-btn" onclick="goToSection(4)">Siguiente: Diccionarios →</button></div>
+		</div>
+		
+		<!-- ================================================================================================== -->
+		<!-- ========================================== DICCIONARIOS ========================================== -->
+		<!-- ================================================================================================== -->
+		<div class="section" id="section-4">
+			<div class="section-header">
+				<div class="section-icon icon-yellow">🔑</div>
+				<div class="section-header-text">
+					<h2>Diccionarios</h2>
+					<p>Colecciones de pares clave-valor</p>
+				</div>
+			</div>
+			
+			<div class="card">
+				<p>
+					Un diccionario es una colección de elementos donde cada uno se almacena como un par de 
+					<strong>clave-valor</strong> (<code>key-value</code>). En lugar de acceder a los datos 
+					mediante un índice numérico (como en las listas o tuplas), se accede a ellos a través 
+					de una clave única.
+				</p>
+				<ul style="padding-left: 40px;">
+					<li>
+						<strong>Mutable:</strong> Puedes modificar, añadir o eliminar elementos después de haber creado el diccionario.
+					</li>
+					<li>
+						<strong>Indexados por claves:</strong> Las claves actúan como los índices.
+					</li>
+					<li>
+						<strong>Claves únicas:</strong> No puede haber claves duplicadas. Si intentas asignar un valor a una clave que 
+						ya existe, el valor anterior se sobrescribe.
+					</li>
+					<li>
+						<strong>Tipos de datos flexibles:</strong> Las claves deben ser de un tipo de datos <strong>inmutable</strong> 
+						(como strings, números o tuplas). Los valores, por otro lado, pueden ser de <strong>cualquier tipo</strong> 
+						(listas, otros diccionarios, funciones, etc.).
+					</li>
+					<li>
+						<strong>Ordenados:</strong> (Python 3.7+) Los diccionarios mantienen el orden de inserción de los elementos.
+					</li>
+				</ul>
+			</div>
+			
+			
+			<div class="card">
+				<h3>¿Por qué usar diccionarios?</h3>
+				<p>
+					Los diccionarios no son solo una estructura de datos más en Python; son la columna vertebral de muchas de sus funciones internas (por ejemplo, los atributos de una clase o las variables globales se manejan como diccionarios tras bambalinas).
+					<br><br>
+					Usamos diccionarios principalmente por tres razones fundamentales: <strong>velocidad</strong>, <strong>semántica (claridad)</strong> y <strong>flexibilidad</strong>.
+				</p>
+				<h3>¿Cuándo usar diccionarios?</h3>
+				<p>
+					<ul style = "padding-left: 45px;">
+						<li>Necesitas asociar cada valor a una clave única y descriptiva.</li>
+						<li>Quieres buscar, insertar o actualizar datos rápidamente por esa clave.</li>
+						<li>El orden de los elementos no es lo importante, sino la relación clave-valor.</li>
+						<li>Representas algo similar a un "registro" con varios campos con nombre.</li>
+					</ul>
+				</p>
+			</div>
+			
+			<div class="card">
+				<h3>🔤 Sintaxis y Creación</h3>
+				<p>
+					Los diccionarios se definen utilizando llaves <code>{}</code> y los pares clave-valor se separan por dos puntos 
+					<code>:</code> y cada elemento por comas <code>,</code>.
+				</p>
+<pre>
+<code class="language-python">nombre_diccionario = {clave_1: valor_1, clave_2: valor_2, ..., clave_n: valor_n}</code>
+</pre>
+				<p>
+					También se puede usar el constructor <code>dict()</code>.
+				</p>
+				<h3 class="sub">💻 Ejemplos:</h3>
+<pre>
+<code class="language-python"># Diccionario vacío
+vacio = {}
+
+# Con datos iniciales
+producto = {
+    "id": 101,
+    "nombre": "Laptop",
+    "precio": 15999.99,
+    "disponible": True,
+}
+
+# Con argumentos clave=valor
+config = dict(host="localhost", port=8080, debug=True)
+
+# Desde una lista de tuplas
+pares = [("a", 1), ("b", 2), ("c", 3)]
+letras = dict(pares)
+
+# Crear un dict con las mismas claves e igual valor inicial
+claves = ["x", "y", "z"]
+coordenadas = dict.fromkeys(claves, 0)
+# → {"x": 0, "y": 0, "z": 0}</code>
+</pre>
+			</div>
+			
+			
+			<div class="tip-box">
+				<div class="tip-title">💡 Tip: Claves válidas</div>
+				<p>
+					Solo pueden ser claves los tipos hashables: <code>str</code>, <code>int</code>, <code>float</code>, <code>tuple</code> 
+					(si sus elementos son hashables) y <code>bool</code>. Las listas y otros diccionarios no pueden ser claves.
+				</p>
+			</div>
+			
+			
+			<div class="card">
+				<h3>Recorrido de diccionarios</h3>
+				<h3 class="sub">💻 Ejemplo:</h3>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">notas = {"María": 9.5, "Juan": 7.8, "Sofía": 10.0}
+
+# Iterar sobre claves (default)
+print("Claves:")
+for alumno in notas:
+    print(alumno)
+
+# Iterar sobre valores
+print("\nValores:")
+for nota in notas.values():
+    print(nota)
+
+# Iterar sobre clave y valor juntos ← el más usado
+print("\nClave: Valor:")
+for alumno, nota in notas.items():
+    print(f"{alumno} : {nota}")</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+Claves:
+María
+Juan
+Sofía
+
+Valores:
+9.5
+7.8
+10.0
+
+Clave : Valor:
+María : 9.5
+Juan : 7.8
+Sofía : 10.0
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="card">
+				<h3 class="sub">💻 Ejemplo: <code>enumerate()</code> (Recorrer con el índice simulado).</h3>
+				<p>
+					Si por alguna razón necesitas mostrar un número de contador mientras recorres el conjunto, 
+					puedes usar la función enumerate().
+				</p>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">paises = {"México", "Argentina", "Colombia", "España"}
+
+for indice, pais in enumerate(paises, start=1):
+    print(f"País {indice}: {pais}")</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+País 1: México
+País 2: Argentina
+País 3: Colombia
+País 4: España
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="card">
+				<h3 class="sub">💻 Ejemplo: Diccionarios Anidados.</h3>
+				<p>
+					Un caso de uso muy real es tener diccionarios dentro de otros diccionarios.
+				</p>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python"># Agenda de contactos
+contactos = {
+    "juan123": {
+        "nombre": "Juan Pérez",
+        "telefono": "555-1234",
+        "emails": ["juan@mail.com", "juan.trabajo@mail.com"]
+    },
+    "maria_g": {
+        "nombre": "María Gómez",
+        "telefono": "555-5678",
+        "emails": ["maria@mail.com"]
+    }
+}
+
+# Acceder a datos anidados
+print(contactos["juan123"]["emails"][1])  # Resultado: juan.trabajo@mail.com
+
+# Agregar un nuevo email a María
+contactos["maria_g"]["emails"].append("maria.nuevo@mail.com")
+print(contactos["maria_g"]["emails"])</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+juan.trabajo@mail.com
+['maria@mail.com', 'maria.nuevo@mail.com']
+</pre>
+					</div>
+				</div>
+			</div>
+					
+			
+			<div class="warning-box">
+				<div class="warning-title">⚠️ 🚨 Importante: Modificar mientras recorres (Uso de copias)</div>
+				<p>
+					No puedes añadir ni eliminar elementos de un diccionario mientras lo estás recorriendo directamente, 
+					ya que Python lanzará un error de tipo <code>RuntimeError: dictionary changed size during iteration</code>.
+					<br>
+					Si necesitas eliminar o cambiar elementos dinámicamente, debes recorrer una <strong>copia</strong> de sus 
+					claves o del diccionario entero:
+				</p>
+<pre>
+<code class="language-python">productos = {"manzana": 10, "platano": 0, "pera": 5}
+
+# Recorremos una lista con las claves para poder modificar el dict original
+for producto in list(productos.keys()):
+    if productos[producto] == 0:
+        del productos[producto]  # Borramos el producto sin inventario
+
+print(productos) 
+# Resultado: {'manzana': 10, 'pera': 5}</code>
+</pre>
+			</div>
+			
+			
+			<div class="card">
+				<h3>Operadores</h3>			
+				<table class="comparison-table table-compact">
+					<thead>
+						<tr>
+							<th>Operador</th>
+							<th>Descripción</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+						  <td><code>[]</code></td>
+						  <td><strong>Operador de indexación / acceso.</strong> Permite acceder al valor de una clave existente (dict[clave]) o asignar/modificar un valor (dict[clave] = valor).</td>
+						</tr>
+						<tr>
+						  <td><code>in</code></td>
+						  <td><strong>Operador de pertenencia.</strong> Devuelve True si una clave específica se encuentra dentro del diccionario.</td>
+						</tr>
+						<tr>
+						  <td><code>not in</code></td>
+						  <td><strong>Operador de no pertenencia.</strong> Devuelve True si una clave específica no se encuentra dentro del diccionario.</td>
+						</tr>
+						<tr>
+						  <td><code>==</code></td>
+						  <td><strong>Operador de igualdad.</strong> Devuelve True si ambos diccionarios tienen exactamente las mismas claves con los mismos valores, sin importar el orden en que fueron insertados.</td>
+						</tr>
+						<tr>
+						  <td><code>!=</code></td>
+						  <td><strong>Operador de desigualdad.</strong> Devuelve True si los diccionarios difieren en alguna clave o en algún valor.</td>
+						</tr>
+						<tr>
+						  <td><code>|</code></td>
+						  <td><strong>Operador de unión (Python 3.9+).</strong> Combina dos diccionarios y crea uno nuevo. Si hay claves duplicadas, prevalecen los valores del diccionario de la derecha.</td>
+						</tr>
+						<tr>
+						  <td><code>|=</code></td>
+						  <td><strong>Operador de actualización por unión (Python 3.9+).</strong> Modifica el diccionario de la izquierda agregando los elementos del de la derecha de forma directa (in-place).</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+				
+					
+			<div class="card">
+				<h3>Métodos</h3>
+				<table class="comparison-table table-compact table-methods">
+					<thead>
+						<tr>
+							<th>Método</th>
+							<th>Descripción</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+						  <td><code>.clear()</code></td>
+						  <td>Elimina todos los elementos del diccionario, dejándolo completamente vacío (modifica el diccionario original).</td>
+						</tr>
+						<tr>
+						  <td><code>.copy()</code></td>
+						  <td>Devuelve una copia superficial (<em>shallow copy</em>) del diccionario.</td>
+						</tr>
+						<tr>
+						  <td><code>.fromkeys()</code></td>
+						  <td>Crea un nuevo diccionario con las claves de la secuencia dada y los valores establecidos en el segundo argumento (por defecto <code>None</code>).</td>
+						</tr>
+						<tr>
+						  <td><code>.get()</code></td>
+						  <td>Devuelve el valor de la clave especificada. Si la clave no existe, devuelve el <code>valor_defecto</code> (por defecto <code>None</code>) en lugar de lanzar un error.</td>
+						</tr>
+						<tr>
+						  <td><code>.items()</code></td>
+						  <td>Devuelve una vista con los pares de elementos del diccionario en forma de tuplas <code>(clave, valor)</code>.</td>
+						</tr>
+						<tr>
+						  <td><code>.keys()</code></td>
+						  <td>Devuelve una vista que contiene todas las claves del diccionario.</td>
+						</tr>
+						<tr>
+						  <td><code>.pop()</code></td>
+						  <td>Elimina la clave especificada y devuelve su valor. Si la clave no existe, devuelve el <code>valor_defecto</code>; si no se proporciona este último y la clave no existe, lanza un <code>KeyError</code>.</td>
+						</tr>
+						<tr>
+						  <td><code>.popitem()</code></td>
+						  <td>Elimina y devuelve el último par <code>(clave, valor)</code> insertado en el diccionario (sigue la lógica LIFO - <em>Last In, First Out</em>).</td>
+						</tr>
+						<tr>
+						  <td><code>.setdefault()</code></td>
+						  <td>Devuelve el valor de la clave si ya existe. Si no existe, inserta la clave con el <code>valor_defecto</code> especificado (por defecto <code>None</code>) y lo devuelve.</td>
+						</tr>
+						<tr>
+						  <td><code>.update()</code></td>
+						  <td>Actualiza el diccionario con los pares clave-valor de otro diccionario o de un iterable de tuplas. Sobrescribe los valores de las claves existentes.</td>
+						</tr>
+						<tr>
+						  <td><code>.values()</code></td>
+						  <td>Devuelve una vista que contiene todos los valores del diccionario.</td>
+						</tr>
+					</tbody>
+					</table>
+			</div>
+			
+			<div class="card">
+				<h3>Funciones Integradas</h3>
+				<table class="comparison-table table-compact">
+					<thead>
+						<tr>
+							<th>Función</th>
+							<th>Descripción</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><code>len()</code></td>
+							<td>Devuelve el número de elementos (pares clave-valor) que tiene el diccionario.</td>
+						</tr>
+						<tr>
+							<td><code>dict()</code></td>
+							<td>El constructor que permite crear un nuevo diccionario a partir de otros iterables, argumentos por nombre o mapeos.</td>
+						</tr>
+						<tr>
+							<td><code>type()</code></td>
+							<td>Devuelve el tipo de objeto, que en este caso será <code>&lt;class 'dict'&gt;</code>.</td>
+						</tr>
+						<tr>
+							<td><code>dir()</code></td>
+							<td>Devuelve una lista con todos los atributos y métodos disponibles para el objeto diccionario.</td>
+						</tr>
+						<tr>
+							<td><code>id()</code></td>
+							<td>Devuelve el identificador único (la dirección de memoria) del diccionario.</td>
+						</tr>
+						<tr>
+							<td><code>sorted()</code></td>
+							<td>Devuelve una <strong>lista ordenada</strong> de las <strong>claves</strong> del diccionario. No modifica el diccionario original.</td>
+						</tr>
+						<tr>
+							<td><code>all()</code></td>
+							<td>Devuelve <code>True</code> si todas las <strong>claves</strong> del diccionario se evalúan como verdaderas (o si el diccionario está vacío).</td>
+						</tr>
+						<tr>
+							<td><code>any()</code></td>
+							<td>Devuelve <code>True</code> si al menos una de las <strong>claves</strong> del diccionario se evalúa como verdadera.</td>
+						</tr>
+						<tr>
+							<td><code>str()</code></td>
+							<td>Convierte el diccionario en una cadena de texto (string) con su representación visual.</td>
+						</tr>
+						<tr>
+							<td><code>repr()</code></td>
+							<td>Devuelve una cadena de texto imprimible que representa al diccionario (útil para depuración).</td>
+						</tr>
+						<tr>
+							<td><code>isinstance()</code></td>
+							<td>Devuelve <code>True</code> si el objeto es un diccionario o una subclase de este.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			
+			<div class="warning-box">
+				<div class="warning-title">⚠️ Restricción Importante: Elementos Mutables:</div>
+				<p>
+					Para que Python pueda asegurar que los elementos sean únicos y buscarlos a máxima velocidad, necesita que los elementos del conjunto sean inmutables 
+					(o más técnicamente, <em>hashables</em>).
+				</p>
+				<ul>
+					<li>
+						<strong>Puedes meter en un conjunto:</strong> Números, strings, booleanos y tuplas.
+					</li>
+					<li>
+						<strong>NO puedes meter en un conjunto:</strong> Listas, diccionarios u otros conjuntos.
+					</li>
+				</ul>
+<pre>
+<code class="language-python"># Esto dará un TypeError: unhashable type: 'list'
+mi_conjunto = {1, 2, [3, 4]}</code>
+</pre>
+			</div>
+			
+			
+			<div class="note-box">
+				<div class="note-title">📝 Nota:</div>
+				<p>
+					Si necesitas meter un conjunto dentro de otro conjunto, Python te ofrece una variante inmutable llamada <code>frozenset</code>.
+				</p>
+			</div>
+			
+			
+			<div class="card">
+				<h3>🗺️ Comprensión de Diccionarios (Set Comprehension)</h3>
+				<p>
+					La estructura siempre va entre llaves <code>{}</code> y define tanto la clave como el valor para cada iteración:
+				</p>
+			</div>
+			
+			
+			<div class="card">
+				<h3>Sintaxis</h3>
+				<p>
+					...
+				</p>
+<pre>
+<code class="language-python">nuevo_diccionario = {clave: valor for elemento in iterable}</code>
+</pre>
+			</div>
+			
+			
+			<div class="card">
+				<h3 class="sub">💻 Ejemplo: Enfoque tradicional (ciclo <code>for</code></h3>
+				<p>
+					Imagina que quieres un diccionario donde los números del 1 al 5 sean las claves y sus cuadrados sean los valores.
+				</p>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">cuadrados = {}
+for x in range(1, 6):
+    cuadrados[x] = x ** 2
+
+print(cuadrados)</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+{1: 1, 2: 4, 3: 9, 4: 16, 5: 25}
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="card">
+				<h3 class="sub">💻 Ejemplo: Con Comprensión de Diccionarios</h3>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">cuadrados = {x: x ** 2 for x in range(1, 6)}
+print(cuadrados)
+# Resultado: {1: 1, 2: 4, 3: 9, 4: 16, 5: 25}</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+{1: 1, 2: 4, 3: 9, 4: 16, 5: 25}
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="card">
+				<h3 class="sub">💻 Ejemplo: Transformar datos de una lista</h3>
+				<p>
+					Supongamos que tienes una lista de nombres y quieres crear un diccionario para 
+					almacenar la longitud de cada nombre.
+				</p>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">nombres = ["Ana", "Alejandro", "Luis", "Gabriela"]
+
+longitudes = {nombre: len(nombre) for nombre in nombres}
+print(longitudes)
+# Resultado: {'Ana': 3, 'Alejandro': 9, 'Luis': 4, 'Gabriela': 8}</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+{'Ana': 3, 'Alejandro': 9, 'Luis': 4, 'Gabriela': 8}
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="card">
+				<h3>Añadiendo Filtros: El uso del <code>if</code>/<code>else</code></h3>
+				<p>
+					Puedes añadir filtros a la comprensión para decidir qué elementos entran al diccionario o qué valor asignarles.
+				</p>
+<pre>
+<code class="language-python">nuevo_conjunto = {expresion for elemento in iterable if condicion}</code>
+</pre>
+			</div>
+			
+			
+			<div class="card">
+				<h3 class="sub">💻 Ejemplo: Filtrar elementos (Condicional <code>if</code> al final)</h3>
+				<p>
+					Solo incluye los elementos que cumplan la condición. Por ejemplo, extraer solo los productos caros 
+					(precio mayor a 20):
+				</p>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">precios_originales = {"camisa": 15, "pantalon": 35, "zapatos": 50, "calcetines": 8}
+
+# Filtrar: clave:valor para cada par si el valor es > 20
+productos_caros = {prod: precio for prod, precio in precios_originales.items() if precio > 20}
+print(productos_caros)
+# Resultado: {'pantalon': 35, 'zapatos': 50}</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+{'pantalon': 35, 'zapatos': 50}
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="card">
+				<h3 class="sub">💻 Ejemplo: Modificar valores dinámicamente (Condicional <code>if-else</code> al principio)</h3>
+				<p>
+					Si necesitas aplicar una lógica de "si pasa esto, pon este valor; si no, pon este otro", el <code>if-else</code> 
+					se coloca antes del <code>for</code>. Por ejemplo, clasificar productos en "Caro" o "Barato":
+				</p>
+				<div class="snippet">
+					<div class="snippet-bar">
+					  <div class="dots"><span></span><span></span><span></span></div>
+					  <span class="snippet-title">Python</span>
+					  <span class="snippet-tag tag-fn">ejemplo</span>
+					</div>
+					<div class="code-wrap">
+						<div class="line-numbers-col"></div>
+<pre>
+<code class="language-python">precios = {"leche": 1.2, "carne": 15.0, "pan": 0.9, "vino": 12.5}
+
+# Si el precio es > 5 es 'Caro', de lo contrario es 'Barato'
+clasificacion = {prod: ("Caro" if precio > 5 else "Barato") for prod, precio in precios.items()}
+print(clasificacion)
+# Resultado: {'leche': 'Barato', 'carne': 'Caro', 'pan': 'Barato', 'vino': 'Caro'}</code>
+</pre>
+					</div>
+					<div class="snippet-bar output-bar">
+					  <span class="snippet-tag tag-output">salida</span>
+					</div>
+
+					<div class="output-body">
+<pre>
+{'leche': 'Barato', 'carne': 'Caro', 'pan': 'Barato', 'vino': 'Caro'}
+</pre>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="tip-box">
+				<div class="tip-title">💡¿Por qué usar la comprensión de diccionarios?</div>
+				<ol style="padding-left: 45px;">
+					<li>
+						<strong>Legibilidad:</strong> Una vez que te acostumbras a la sintaxis, el código es mucho más limpio y directo.
+					</li>
+					<li>
+						<strong>Rendimiento:</strong> La comprensión de diccionarios suele ejecutarse más rápido en Python que un ciclo 
+						<code>for</code> tradicional debido a optimizaciones internas a nivel de C (el lenguaje en el que está construido Python).
+					</li>
+				</ol>
+			</div>			
+			
+				
+			<div class="nav-buttons"><button class="nav-arrow-btn" onclick="goToSection(3)">← Anterior</button><button class="nav-arrow-btn" onclick="goToSection(5)">Siguiente: Comparativa →</button></div>
+		</div>
+					
+		
+		<!-- ================================================================================================= -->
+		<!-- ========================================== COMPARATIVA ========================================== -->
+		<!-- ================================================================================================= -->
+        <div class="section" id="section-5">           			
+			<div class="section-header">
+				<div class="section-icon icon-blue">📂</div>
+				<div class="section-header-text">
+					<h2>Comparativa</h2>
+					<p>...</p>
+				</div>
+			</div>
+			
+			<div class="card">
+				<p>
+					Las colecciones de Python permiten almacenar y administrar múltiples elementos dentro de una misma variable. Aunque <strong>listas, tuplas, conjuntos y diccionarios</strong> comparten este objetivo general, difieren en aspectos importantes como la mutabilidad, el orden, la forma de acceso y la unicidad de los elementos.
+				</p>
+			</div>
+			
+			<div class="card">
+				<h3>Tabla Comparativa</h3>
+				<table class="comparison-table table-compact">
+					<thead>
+						<tr>
+							<th>Característica</th>
+							<th>Lista (<code>list</code>)</th>
+							<th>Tupla (<code>tuple</code>)</th>
+							<th>Conjunto (<code>set</code>)</th>
+							<th>Diccionario (<code>dict</code>)</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td style="text-align: center;"><strong>Sintaxis</strong></td>
+							<td style="text-align: center;"><code>[ ]</code></td>
+							<td style="text-align: center;"><code>( )</code></td>
+							<td style="text-align: center;"><code>{ }</code></td>
+							<td style="text-align: center;"><code>{clave: valor}</code></td>
+						</tr>
+						<tr>
+							<td style="text-align: center;"><strong>Tipo de colección</strong></td>
+							<td style="text-align: center;">Secuencia</td>
+							<td style="text-align: center;">Secuencia</td>
+							<td style="text-align: center;">Conjunto</td>
+							<td style="text-align: center;">Mapeo</td>
+						</tr>
+						<tr>
+							<td style="text-align: center;"><strong>Orden de inserción</strong></td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">No*</td>
+							<td style="text-align: center;">Sí</td>
+						</tr>
+						<tr>
+							<td style="text-align: center;"><strong>Mutable</strong></td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">No</td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">Sí</td>
+						</tr>
+						<tr>
+							<td style="text-align: center;"><strong>Inmutable</strong></td>
+							<td style="text-align: center;">No</td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">No</td>
+							<td style="text-align: center;">No</td>
+						</tr>
+						<tr>
+							<td style="text-align: center;"><strong>Elementos repetidos</strong></td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">No</td>
+							<td style="text-align: center;">Valores: Sí</td>
+						</tr>
+						<tr>
+							<td style="text-align: center;"><strong>Claves repetidas</strong></td>
+							<td style="text-align: center;">N/A</td>
+							<td style="text-align: center;">N/A</td>
+							<td style="text-align: center;">N/A</td>
+							<td style="text-align: center;">No</td>
+						</tr>
+						<tr>
+							<td style="text-align: center;"><strong>Acceso por índice</strong></td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">No</td>
+							<td style="text-align: center;">No</td>
+						</tr>
+						<tr>
+							<td style="text-align: center;"><strong>Acceso por clave</strong></td>
+							<td style="text-align: center;">No</td>
+							<td style="text-align: center;">No</td>
+							<td style="text-align: center;">No</td>
+							<td style="text-align: center;">Sí</td>
+						</tr>
+						<tr>
+							<td style="text-align: center;"><strong>Modifica elementos existentes</strong></td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">No</td>
+							<td style="text-align: center;">No**</td>
+							<td style="text-align: center;">Sí</td>
+						</tr>
+						<tr>
+							<td style="text-align: center;"><strong>Agrega elementos</strong></td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">No</td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">Sí</td>
+						</tr>
+						<tr>
+							<td style="text-align: center;"><strong>Elimina elementos</strong></td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">No</td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">Sí</td>
+						</tr>
+						<tr>
+							<td style="text-align: center;"><strong>Longitud variable</strong></td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">No***</td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">Sí</td>
+						</tr>
+						<tr>
+							<td style="text-align: center;"><strong>Contiene distintos tipos de datos</strong></td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">Sí</td>
+						</tr>
+						<tr>
+							<td style="text-align: center;"><strong>Contiene otras colecciones</strong></td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">Sí****</td>
+							<td style="text-align: center;">Sí</td>
+						</tr>
+						<tr>
+							<td style="text-align: center;"><strong>Recorrible con <code>for</code></strong></td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">Sí</td>
+						</tr>
+						<tr>
+							<td style="text-align: center;"><strong>Slicing (<code>[:]</code>)</strong></td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">No</td>
+							<td style="text-align: center;">No</td>
+						</tr>
+						<tr>
+							<td style="text-align: center;"><strong>Búsqueda por pertenencia (<code>in</code>)</strong></td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">Sí (en claves)</td>
+						</tr>
+						<tr>
+							<td style="text-align: center;"><strong>Uso de memoria</strong></td>
+							<td style="text-align: center;">Media</td>
+							<td style="text-align: center;">Baja</td>
+							<td style="text-align: center;">Media</td>
+							<td style="text-align: center;">Mayor</td>
+						</tr>
+						<tr>
+							<td style="text-align: center;"><strong>Velocidad de búsqueda</strong></td>
+							<td style="text-align: center;">Media</td>
+							<td style="text-align: center;">Media</td>
+							<td style="text-align: center;">Alta</td>
+							<td style="text-align: center;">Muy alta por clave</td>
+						</tr>
+						<tr>
+							<td style="text-align: center;"><strong>Uso principal</strong></td>
+							<td style="text-align: center;">Secuencias modificables</td>
+							<td style="text-align: center;">Datos constantes</td>
+							<td style="text-align: center;">Elementos únicos</td>
+							<td style="text-align: center;">Relación<br>clave-valor</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<p style="margin-top: 15px;">
+					<strong>Notas de la tabla</strong>
+				</p>
+				<ul style="padding-left: 40px;">
+					<li style="text-align: justify;">
+						<code>*</code> Un conjunto no garantiza ningún orden, ni siquiera el de inserción. El orden en que Python 
+						muestra sus elementos depende del <em>hash</em> interno de cada valor, no del momento en que los agregaste, 
+						y puede variar entre ejecuciones.
+					</li>
+					<li style="text-align: justify;">
+						<code>**</code> Un conjunto no permite modificar un elemento existente directamente (no existen índices 
+						como <code>conjunto[0] = valor</code>). Lo que sí puedes hacer es <strong>eliminar</strong> el elemento 
+						antiguo con <code>.discard()</code> o <code>.remove()</code> y <strong>agregar</strong> uno nuevo con 
+						<code>.add()</code>, simulando una "modificación".
+					</li>
+					<li style="text-align: justify;">
+						<code>***</code> Una tupla nunca cambia de tamaño una vez creada. Al concatenar con <code>+</code> 
+						(por ejemplo <code>t + (4,)</code>), Python <strong>crea una tupla completamente nueva</strong>; 
+						la tupla original permanece intacta y con su longitud original.
+					</li>
+					<li style="text-align: justify;">
+						<code>****</code> Un conjunto solo puede contener colecciones que sean <strong>hashables (inmutables)</strong>, 
+						como tuplas o <code>frozenset</code>. <strong>No puede contener</strong> listas, diccionarios ni otros 
+						conjuntos, ya que son mutables y Python no puede calcularles un valor hash 
+						(<code>TypeError: unhashable type</code>).
+					</li>
+				</ul>
+			</div>
+			
+			
+			<div class="card">
+				<h3>Diferencias Principales</h3>
+				<table class="comparison-table table-compact">
+					<thead>
+						<tr>
+							<th>Aspecto</th>
+							<th>Lista (<code>list</code>)</th>
+							<th>Tupla (<code>tuple</code>)</th>
+							<th>Conjunto (<code>set</code>)</th>
+							<th>Diccionario (<code>dict</code>)</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><strong>¿Qué almacena?</strong></td>
+							<td style="text-align: center;">Valores</td>
+							<td style="text-align: center;">Valores</td>
+							<td style="text-align: center;">Valores únicos</td>
+							<td style="text-align: center;">Pares<br>clave-valor</td>
+						</tr>
+						<tr>
+							<td><strong>¿Cómo se accede?</strong></td>
+							<td style="text-align: center;">Índice</td>
+							<td style="text-align: center;">Índice</td>
+							<td style="text-align: center;">Recorrido</td>
+							<td style="text-align: center;">Clave</td>
+						</tr>
+						<tr>
+							<td><strong>¿Puede modificarse?</strong></td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">No</td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">Sí</td>
+						</tr>
+						<tr>
+							<td><strong>¿Acepta duplicados?</strong></td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">No</td>
+							<td style="text-align: center;">Claves: No<br>Valores: Sí</td>
+						</tr>
+						<tr>
+							<td><strong>¿Mantiene el orden?</strong></td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">No</td>
+							<td style="text-align: center;">Sí</td>
+						</tr>
+						<tr>
+							<td><strong>¿Permite operaciones matemáticas de conjuntos?</strong></td>
+							<td style="text-align: center;">No</td>
+							<td style="text-align: center;">No</td>
+							<td style="text-align: center;">Sí</td>
+							<td style="text-align: center;">No</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			
+			<div class="card">
+				<h3>¿Cuándo utilizar cada una?</h3>
+				<table class="comparison-table table-compact">
+					<thead>
+						<tr>
+							<th>Necesidad</th>
+							<th>Colección recomendada</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Almacenar una secuencia de datos que cambiará con frecuencia</td>
+							<td>Lista</td>
+						</tr>
+						<tr>
+							<td>Almacenar datos que no deben modificarse</td>
+							<td>Tupla</td>
+						</tr>
+						<tr>
+							<td>Eliminar duplicados o realizar uniones e intersecciones</td>
+							<td>Conjunto</td>
+						</tr>
+						<tr>
+							<td>Asociar identificadores con valores</td>
+							<td>Diccionario</td>
+						</tr>
+						<tr>
+							<td>Acceder por posición</td>
+							<td>Lista o Tupla</td>
+						</tr>
+						<tr>
+							<td>Acceder por nombre o clave</td>
+							<td>Diccionario</td>
+						</tr>
+						<tr>
+							<td>Realizar búsquedas rápidas de pertenencia</td>
+							<td>Conjunto</td>
+						</tr>
+						<tr>
+							<td>Representar registros con atributos</td>
+							<td>Diccionario</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			
+			<div class="card">
+				<h3>Resumen</h3>
+				<table class="comparison-table table-compact">
+					<thead>
+						<tr>
+							<th>Colección</th>
+							<th>Idea clave</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Lista (<code>list</code>)</td>
+							<td>Secuencia ordenada y modificable.</td>
+						</tr>
+						<tr>
+							<td>Tupla (<code>tuple</code>)</td>
+							<td>Secuencia ordenada e inmutable.</td>
+						</tr>
+						<tr>
+							<td>Conjunto (<code>set</code>)</td>
+							<td>Colección de elementos únicos no ordenados sin índices.</td>
+						</tr>
+						<tr>
+							<td>Diccionario (<code>dict</code>)</td>
+							<td>Colección de pares clave-valor con acceso por clave.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			
+			<div class="card">
+				<p>
+					En términos generales, <strong>las listas y tuplas son secuencias, los conjuntos se enfocan en la unicidad de los elementos y los diccionarios en la asociación entre claves y valores</strong>. Estas diferencias determinan cuál resulta más adecuada para cada problema.
+				</p>
+			</div>
+			
+		
+			<div class="nav-buttons"><button class="nav-arrow-btn" onclick="goToSection(4)">← Anterior</button><button class="nav-arrow-btn" disabled>🏁 Fin del tutorial</button></div>
+		</div>
+		
+
+    </main>
+
+    <div class="score-panel" id="scorePanel" style="display:none;"><div class="score-label">🏆 Puntos</div><div class="score-value" id="scoreValue">0</div><div class="score-total">de 10 posibles</div></div>
+	
+    <footer class="footer-m365">
+		<div class="footer-content">
+			<div class="footer-top-bar"></div>
+			<p class="footer-m365-title">Curso Python</p>
+			<p class="footer-m365-label">Módulo Colecciones</p>
+			<div class="footer-banner" >
+				<div class="footer-text">
+					<span class="label">Instructor: </span>
+					<div class="footer-logo-space">
+						<img src="imgs/LogoM.png" alt="Logo" style="height: 44px;"><span class="name">anuel</span>
+					</div>
+					<div class="footer-logo-space">
+						<img src="imgs/LogoA.png" alt="Logo" style="height: 40px;"><span class="name">lejandro</span>
+					</div>
+					<div class="footer-logo-space">
+						<img src="imgs/LogoL.png" alt="Logo"><span class="name">ópez</span>
+					</div>
+					<div class="footer-logo-space">
+						<img src="imgs/LogoZ.png" alt="Logo"><span class="name">epeda</span>
+					</div>
+				</div>
+			</div>
+			<div class="footer-bottom-bar"></div>
+		</div>
+	</footer>
+
+    <script>		
+        let currentSection = 0; const totalSections = 6;
+        function goToSection(index) { if (index < 0 || index >= totalSections) return; document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); const target = document.getElementById('section-' + index); if (target) target.classList.add('active'); currentSection = index; document.querySelectorAll('.nav-btn').forEach((btn, i) => btn.classList.toggle('active', i === index)); updateProgress(); window.scrollTo({ top: 0, behavior: 'smooth' }); document.getElementById('scorePanel').style.display = index === 8 ? 'block' : 'none'; if (index === 9 && typeof _editors !== 'undefined') { setTimeout(() => { Object.values(_editors).forEach(({ cm }) => cm.refresh()); }, 50); } }
+        function updateProgress() { document.getElementById('progressFill').style.width = ((currentSection + 1) / totalSections * 100) + '%'; document.getElementById('progressText').textContent = 'Sección ' + (currentSection + 1) + ' de ' + totalSections; }
+        // ===== QUIZ =====
+        const questions = [
+          {
+            text: '¿Qué palabra clave se utiliza en Python para definir una función?',
+            code: null,
+            opts: ['function', 'def', 'fun', 'define'],
+            ans: 1,
+            exp: 'En Python las funciones se definen con la palabra clave <code>def</code>, seguida del nombre, paréntesis y dos puntos: <code>def mi_funcion():</code>'
+          },
+          {
+            text: '¿Qué devuelve una función que NO tiene instrucción <code>return</code>?',
+            code: 'def saludar():\n    print("Hola")\n\nresultado = saludar()\nprint(resultado)',
+            opts: ['0', 'False', 'None', 'Lanza un error'],
+            ans: 2,
+            exp: 'Toda función sin <code>return</code> (o con <code>return</code> vacío) devuelve <code>None</code> implícitamente.'
+          },
+          {
+            text: '¿Qué imprime este código?',
+            code: 'def potencia(base, exponente=2):\n    return base ** exponente\n\nprint(potencia(3))',
+            opts: ['9', '6', '8', 'TypeError'],
+            ans: 0,
+            exp: 'Como no se pasa el segundo argumento, se usa el valor por defecto <code>exponente=2</code>. Entonces <code>3 ** 2 = 9</code>.'
+          },
+          {
+            text: '¿Cuál de las siguientes definiciones causa un <code>SyntaxError</code>?',
+            code: null,
+            opts: [
+              'def f(a, b=10):',
+              'def f(a=5, b=10):',
+              'def f(a=5, b):',
+              'def f(a, b, c=0):'
+            ],
+            ans: 2,
+            exp: 'Los parámetros con valor por defecto siempre deben ir DESPUÉS de los parámetros sin default. Poner <code>a=5</code> antes de <code>b</code> (sin default) genera un <code>SyntaxError</code>.'
+          },
+          {
+            text: '¿Qué tipo de función es <code>cuadrado = lambda x: x ** 2</code>?',
+            code: null,
+            opts: [
+              'Una función recursiva',
+              'Una función anónima de una sola línea (lambda)',
+              'Una función con parámetros por nombre',
+              'Una función sin parámetros'
+            ],
+            ans: 1,
+            exp: 'Las funciones <code>lambda</code> son funciones anónimas (sin nombre) de una sola expresión. Son equivalentes a <code>def cuadrado(x): return x ** 2</code>.'
+          },
+          {
+            text: '¿Qué imprime este código?',
+            code: 'def menor_mayor(a, b):\n    return min(a, b), max(a, b)\n\np, q = menor_mayor(8, 3)\nprint(p, q)',
+            opts: ['8 3', '3 8', '(3, 8)', 'TypeError'],
+            ans: 1,
+            exp: '<code>return min(a,b), max(a,b)</code> devuelve una tupla <code>(3, 8)</code>. Al hacer <code>p, q = ...</code> se desempaqueta: <code>p=3</code>, <code>q=8</code>. Se imprime <code>3 8</code>.'
+          },
+          {
+            text: '¿Qué hace el símbolo <code>*</code> solo en la firma de esta función?',
+            code: 'def conectar(host, *, timeout=30):\n    pass',
+            opts: [
+              'Indica que la función acepta cualquier número de argumentos posicionales',
+              'Actúa como separador: todo lo que sigue solo puede pasarse por nombre (keyword-only)',
+              'Es un error de sintaxis',
+              'Hace que el parámetro timeout sea obligatorio'
+            ],
+            ans: 1,
+            exp: 'El <code>*</code> solo como separador indica que los parámetros que le siguen (<code>timeout</code>) son <em>keyword-only</em>: deben pasarse obligatoriamente por nombre, no por posición.'
+          },
+          {
+            text: '¿Qué imprime este código?',
+            code: 'def sumar(*nums):\n    return sum(nums)\n\nprint(sumar(1, 2, 3, 4))',
+            opts: ['[1, 2, 3, 4]', '10', '(1, 2, 3, 4)', 'Error'],
+            ans: 1,
+            exp: '<code>*nums</code> empaqueta todos los argumentos posicionales en una tupla. <code>sum((1,2,3,4))</code> devuelve <code>10</code>.'
+          },
+          {
+            text: '¿Cuál es la característica principal de una función recursiva?',
+            code: null,
+            opts: [
+              'Que no tiene parámetros',
+              'Que retorna siempre None',
+              'Que se llama a sí misma y tiene un caso base que detiene la recursión',
+              'Que solo acepta argumentos por nombre'
+            ],
+            ans: 2,
+            exp: 'Una función recursiva se llama a sí misma. La clave es tener un <strong>caso base</strong> que detenga la recursión; sin él, la función se llamaría infinitamente hasta generar un <code>RecursionError</code>.'
+          },
+          {
+            text: '¿Qué devuelve <code>divmod(17, 5)</code>?',
+            code: null,
+            opts: ['3', '2', '(3, 2)', '3.4'],
+            ans: 2,
+            exp: '<code>divmod(x, y)</code> es una función built-in que devuelve una tupla <code>(cociente, residuo)</code>. 17 ÷ 5 = 3 con residuo 2, por eso devuelve <code>(3, 2)</code>.'
+          }
+        ];
+
+        let currentQ = 0;
+        let quizScore = 0;
+        let answered = false;
+
+        function renderQuestion() {
+          const q = questions[currentQ];
+
+          // Construir el HTML de la pregunta separando texto y código
+          let questionHTML =
+            '<span style="color:var(--text-muted);font-size:0.8rem;">Pregunta ' + (currentQ+1) + ' de ' + questions.length + '</span><br><br>' +
+            '<p style="font-family:Segoe UI,Tahoma,sans-serif;font-size:1em;font-weight:600;color:var(--text-light);margin-bottom:' + (q.code ? '12px' : '0') + ';line-height:1.6;">' + q.text + '</p>';
+
+          if (q.code) {
+            questionHTML +=
+              '<pre style="font-family:Consolas,Monaco,monospace;font-size:0.88em;line-height:1.8;' +
+              'background:var(--bg-code);border:1px solid rgba(48,105,152,0.3);border-radius:8px;' +
+              'padding:12px 16px;color:var(--python-yellow);white-space:pre;overflow-x:auto;margin-top:4px;">' +
+              q.code.replace(/\\n/g, '\n') + '</pre>';
+          }
+
+          document.getElementById('quizQ').innerHTML = questionHTML;
+
+          const optsEl = document.getElementById('quizOpts');
+          optsEl.innerHTML = '';
+          q.opts.forEach((opt, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'quiz-opt';
+            // Opciones: texto normal (sin código de bloque)
+            btn.innerHTML =
+              '<span style="color:var(--python-blue-light);font-weight:700;margin-right:10px;">' + String.fromCharCode(65+i) + '.</span>' +
+              '<span style="font-family:Segoe UI,Tahoma,sans-serif;white-space:pre-wrap;">' + opt + '</span>';
+            btn.onclick = () => answerQ(i, btn);
+            optsEl.appendChild(btn);
+          });
+          document.getElementById('quizFeedback').classList.remove('show');
+          document.getElementById('quizNext').classList.remove('show');
+          answered = false;
+        }
+
+        function answerQ(idx, btn) {
+          if (answered) return;
+          answered = true;
+          const q = questions[currentQ];
+          const allBtns = document.querySelectorAll('.quiz-opt');
+          const fb = document.getElementById('quizFeedback');
+          const nxt = document.getElementById('quizNext');
+          if (idx === q.ans) {
+            btn.classList.add('correct');
+            fb.className = 'quiz-feedback show ok';
+            fb.innerHTML = '✅ <strong>¡Correcto!</strong> ' + q.exp;
+            quizScore++;
+            document.getElementById('scoreValue').textContent = quizScore;
+          } else {
+            btn.classList.add('wrong');
+            allBtns[q.ans].classList.add('correct');
+            fb.className = 'quiz-feedback show fail';
+            fb.innerHTML = '❌ <strong>Incorrecto.</strong> ' + q.exp;
+          }
+          nxt.classList.add('show');
+          if (currentQ === questions.length - 1) { nxt.textContent = 'Ver resultado 🎉'; }
+        }
+
+        function nextQuestion() {
+          currentQ++;
+          if (currentQ >= questions.length) { showQuizResult(); } else { renderQuestion(); }
+        }
+
+        function showQuizResult() {
+          document.getElementById('quizContainer').style.display = 'none';
+          const r = document.getElementById('quizResult');
+          r.style.display = 'block';
+		  document.querySelector('#section-8 .nav-buttons .nav-arrow-btn:last-child').disabled = false;
+          const pct = Math.round((quizScore / questions.length) * 100);
+          document.getElementById('quizScore').textContent = quizScore + ' / ' + questions.length + ' (' + pct + '%)';
+          const msgs = [
+            [80, '🏆 ¡Excelente! Dominas las estructuras de iteración de Python.'],
+            [60, '👍 Bien hecho. Repasa break/continue/else para perfeccionar.'],
+            [0,  '📚 Sigue practicando. Revisa los ejemplos interactivos del tutorial.']
+          ];
+          document.getElementById('quizMsg').textContent = msgs.find(([min]) => pct >= min)[1];
+        }
+
+        function restartQuiz() {
+          currentQ = 0; quizScore = 0; answered = false;
+          document.getElementById('quizContainer').style.display = 'block';
+          document.getElementById('quizResult').style.display = 'none';
+          renderQuestion();
+        }
+		
+		/*
+		function finishTutorial() {
+          //alert('🎉 ¡Felicidades! Completaste el tutorial.\nPuntaje final: ' + quizScore + ' / ' + questions.length + '\n\nAhora pon en práctica lo aprendido en los ejercicios. ¡Éxito!');
+          goToSection(9);
+        }
+		*/
+
+        renderQuestion();
+        function runDemo1() { const edad = parseInt(document.getElementById('demo1-edad').value); const output = document.getElementById('demo1-output'); output.classList.add('has-output'); if (isNaN(edad)) { output.textContent = '⚠️ Ingresa un número válido.'; return; } output.textContent = (edad >= 18 ? 'Eres mayor de edad' : '') + '\nFin del programa'; }
+        function runDemo2() { const n = parseInt(document.getElementById('demo2-numero').value); const output = document.getElementById('demo2-output'); output.classList.add('has-output'); if (isNaN(n)) { output.textContent = '⚠️ Ingresa un número válido.'; return; } output.textContent = n + (n % 2 === 0 ? ' es par ✅' : ' es impar 🔵'); }
+        function runDemo3() { const nota = parseInt(document.getElementById('demo3-nota').value); const output = document.getElementById('demo3-output'); output.classList.add('has-output'); if (isNaN(nota) || nota < 0 || nota > 100) { output.textContent = '⚠️ Nota válida entre 0 y 100.'; return; } let r = nota >= 90 ? '🏆 Excelente - A' : nota >= 80 ? '👍 Muy bien - B' : nota >= 70 ? '📝 Bien - C' : nota >= 60 ? '⚠️ Suficiente - D' : '❌ Reprobado - F'; output.textContent = 'Nota: ' + nota + '/100\nResultado: ' + r; }
+        function runDemo4() { const a = parseFloat(document.getElementById('demo4-a').value); const b = parseFloat(document.getElementById('demo4-b').value); const output = document.getElementById('demo4-output'); output.classList.add('has-output'); if (isNaN(a) || isNaN(b)) { output.textContent = '⚠️ Ingresa números válidos.'; return; } let r = 'a = ' + a + ', b = ' + b + '\n\na > b: ' + (a>b) + '\na < b: ' + (a<b) + '\na == b: ' + (a===b) + '\na != b: ' + (a!==b) + '\n\na > 0 and b > 0: ' + (a>0&&b>0) + '\na > 0 or b > 0: ' + (a>0||b>0) + '\nnot (a > b): ' + !(a>b); output.textContent = r; }
+        function runDemo5() { const u = document.getElementById('demo5-user').value; const p = document.getElementById('demo5-pass').value; const r = document.getElementById('demo5-role').value; const output = document.getElementById('demo5-output'); output.classList.add('has-output'); if (u === 'admin' && p === '1234') { output.textContent = '✅ Login exitoso\n' + (r === 'administrador' ? '🔓 Acceso total' : r === 'editor' ? '✏️ Acceso de edición' : '👁️ Solo lectura'); } else { output.textContent = '❌ Credenciales incorrectas'; } }
+        function runDemo6() { const n = parseFloat(document.getElementById('demo6-num').value); const output = document.getElementById('demo6-output'); output.classList.add('has-output'); if (isNaN(n)) { output.textContent = '⚠️ Ingresa un número válido.'; return; } const tipo = n > 0 ? 'positivo' : n < 0 ? 'negativo' : 'cero'; const abs = n >= 0 ? n : -n; const par = n === 0 ? 'cero' : Math.abs(n) % 2 === 0 ? 'par' : 'impar'; output.textContent = 'Número: ' + n + '\nTipo: ' + tipo + '\nValor absoluto: ' + abs + '\nEs: ' + par; }
+        function runDemo7() { const dia = document.getElementById('demo7-dia').value; const output = document.getElementById('demo7-output'); output.classList.add('has-output'); let r = 'match dia:\n'; let m = ''; switch(dia) { case 'lunes': r += '    case "lunes":\n'; m = '💪 Inicio de semana'; break; case 'viernes': r += '    case "viernes":\n'; m = '🎉 ¡Casi fin de semana!'; break; case 'sábado': case 'domingo': r += '    case "sábado" | "domingo":\n'; m = '🏖️ Fin de semana'; break; default: r += '    case _:\n'; m = '📅 Día normal'; } r += '        print("' + m + '")\n\n📤 Salida:\n' + m; output.textContent = r; }
+		
+        // ===== SIMULADOR CORREGIDO CON SOPORTE PARA IF/ELIF/ELSE =====
+        function runEditor(num) {
+            const challengeBoxes = document.querySelectorAll('#section-8 .challenge-box');
+            const box = challengeBoxes[num - 1]; if (!box) return;
+            const instructionsDiv = box.querySelector('.editor-instructions');
+            const instructionsText = instructionsDiv ? instructionsDiv.innerText : '';
+            const textarea = document.getElementById('editor-' + num);
+            const fullCode = instructionsText + textarea.value;
+            const output = document.getElementById('output-' + num);
+            try { const result = simulatePython(fullCode); output.className = 'editor-output success'; output.textContent = result || '(Sin salida)'; } catch (e) { output.className = 'editor-output error'; output.textContent = '❌ Error: ' + e.message; }
+        }
+
+        function simulatePython(code) {
+            const lines = code.split('\n');
+            let output = [];
+            let variables = {};
+
+            function getIndent(line) { const m = line.match(/^(\s*)/); return m ? m[1].length : 0; }
+            function isEmpty(line) { const t = line.trim(); return t === '' || t.startsWith('#'); }
+
+            function evaluateCondition(cond) {
+                let expr = cond.trim();
+                for (let vn in variables) {
+                    const re = new RegExp('\\b' + vn.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g');
+                    const val = variables[vn];
+                    if (typeof val === 'number') expr = expr.replace(re, val);
+                    else if (typeof val === 'string') expr = expr.replace(re, '"' + val.replace(/"/g, '\\"') + '"');
+                }
+                expr = expr.replace(/\band\b/g, '&&').replace(/\bor\b/g, '||').replace(/\bnot\b/g, '!');
+                try { return !!Function('"use strict"; return (' + expr + ')')(); } catch(e) { return false; }
+            }
+
+            function evaluateExpression(expr) {
+                let e = expr.trim();
+                for (let vn in variables) {
+                    const re = new RegExp('\\b' + vn.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g');
+                    const val = variables[vn];
+                    if (typeof val === 'number') e = e.replace(re, val);
+                    else if (typeof val === 'string') e = e.replace(re, '"' + val.replace(/"/g, '\\"') + '"');
+                }
+                e = e.replace(/\bTrue\b/g, 'true').replace(/\bFalse\b/g, 'false');
+                e = e.replace(/\band\b/g, '&&').replace(/\bor\b/g, '||').replace(/\bnot\b/g, '!');
+                try { return Function('"use strict"; return (' + e + ')')(); } catch(e) { return expr; }
+            }
+
+            function processPrint(content) {
+                if (content.startsWith('f"') || content.startsWith("f'")) {
+                    let str = content.slice(2, -1);
+                    str = str.replace(/\{([^}]+)\}/g, (m, expr) => { try { return evaluateExpression(expr.trim()); } catch(e) { return m; } });
+                    output.push(str);
+                } else {
+                    if ((content.startsWith('"') && content.endsWith('"')) || (content.startsWith("'") && content.endsWith("'"))) output.push(content.slice(1, -1));
+                    else { try { output.push(String(evaluateExpression(content))); } catch(e) { output.push(content); } }
+                }
+            }
+
+            function processAssignment(line) {
+                const m = line.trim().match(/^(\w+)\s*=\s*(.+)$/);
+                if (m) {
+                    const vn = m[1]; let val = m[2].trim();
+                    if (val.startsWith('f"') || val.startsWith("f'")) {
+                        let s = val.slice(2, -1); s = s.replace(/\{([^}]+)\}/g, (mm, ex) => { try { return evaluateExpression(ex.trim()); } catch(e) { return mm; } }); variables[vn] = s;
+                    } else if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) { variables[vn] = val.slice(1, -1); }
+                    else { try { variables[vn] = evaluateExpression(val); } catch(e) { variables[vn] = val; } }
+                    return true;
+                }
+                return false;
+            }
+
+            function skipBlock(start, baseInd) {
+                let i = start;
+                while (i < lines.length) { const l = lines[i]; if (isEmpty(l)) { i++; continue; } if (getIndent(l) <= baseInd) return i; i++; }
+                return i;
+            }
+
+            function processIfChain(start, chainInd) {
+                let i = start;
+                let satisfied = false;
+                while (i < lines.length) {
+                    const line = lines[i]; if (isEmpty(line)) { i++; continue; }
+                    const ind = getIndent(line);
+                    if (ind < chainInd) break;
+                    if (ind > chainInd) { i++; continue; }
+                    const trimmed = line.trim();
+                    const ifM = trimmed.match(/^if\s+(.+):$/);
+                    const elifM = trimmed.match(/^elif\s+(.+):$/);
+                    const elseM = trimmed.match(/^else:$/);
+                    if (!ifM && !elifM && !elseM) break;
+
+                    if (!satisfied) {
+                        if (ifM && evaluateCondition(ifM[1])) { satisfied = true; i = executeBlock(i + 1, chainInd); continue; }
+                        if (elifM && evaluateCondition(elifM[1])) { satisfied = true; i = executeBlock(i + 1, chainInd); continue; }
+                        if (elseM) { satisfied = true; i = executeBlock(i + 1, chainInd); continue; }
+                    }
+                    i = skipBlock(i + 1, chainInd);
+                }
+                return i;
+            }
+
+            function executeBlock(start, baseInd) {
+                let i = start;
+                while (i < lines.length) {
+                    const line = lines[i]; if (isEmpty(line)) { i++; continue; }
+                    const ind = getIndent(line); if (ind <= baseInd) return i;
+                    const trimmed = line.trim();
+                    if (trimmed.match(/^if\s+(.+):$/)) { i = processIfChain(i, ind); continue; }
+                    const pm = trimmed.match(/^print\((.+)\)$/);
+                    if (pm) { processPrint(pm[1]); i++; continue; }
+                    if (processAssignment(trimmed)) { i++; continue; }
+                    i++;
+                }
+                return i;
+            }
+
+            executeBlock(0, -1);
+            return output.join('\n');
+        }
+
+        function toggleSolution(num) { document.getElementById('solution-' + num).classList.toggle('visible'); }
+        document.addEventListener('keydown', function(e) { if (e.target.tagName === 'TEXTAREA') { if (e.key === 'Tab') { e.preventDefault(); const s = e.target.selectionStart; e.target.value = e.target.value.substring(0, s) + '    ' + e.target.value.substring(e.target.selectionEnd); e.target.selectionStart = e.target.selectionEnd = s + 4; } return; } if (e.key === 'ArrowRight' && currentSection < totalSections - 1) goToSection(currentSection + 1); else if (e.key === 'ArrowLeft' && currentSection > 0) goToSection(currentSection - 1); });
+        updateProgress();
+		
+		
+
+
+		
+		
+    </script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script>
+  function addLineNumbers() {
+    document.querySelectorAll('.code-wrap').forEach(wrap => {
+      const code = wrap.querySelector('code');
+      const col  = wrap.querySelector('.line-numbers-col');
+      if (!code || !col) return;
+      const lines = code.textContent.split('\n');
+      const count = lines[lines.length - 1].trim() === '' ? lines.length - 1 : lines.length;
+      col.innerHTML = Array.from({ length: count }, (_, i) => `<span>${i + 1}</span>`).join('');
+    });
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.Prism) Prism.hooks.add('complete', addLineNumbers);
+    setTimeout(addLineNumbers, 400);
+  });
+</script>
+</body>
+</html>
